@@ -14,7 +14,7 @@
               </div>
               <div class="form-group mt-4">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Your Password"
+                <input type="password" id="password" class="form-control" placeholder="Your Password" autocomplete="current-password"
                   v-model="data.password" />
               </div>
               <button class="btn btn-primary mt-10 block w-full">Sign In</button>

@@ -25,7 +25,7 @@
                         <ul class="nice-scroll p-0">
                           <li v-for="(category, index) in categoryStore.data" :key="index">
                             <button type="button" class="border-0 bg-transparent"
-                              @click="getProductByCategory(category.id)">
+                              @click="getProductByData(category.id, 'category')">
                               {{ category.name }}
                               <span class="ml-2">({{ category.products.length }})</span>
                             </button>
@@ -42,11 +42,14 @@
                   <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
                     <div class="card-body">
                       <div class="shop__sidebar__brand">
-                        <ul>
-                          <li><a href="#">Louis Vuitton</a></li>
-                          <li><a href="#">Chanel</a></li>
-                          <li><a href="#">Hermes</a></li>
-                          <li><a href="#">Gucci</a></li>
+                        <ul class="nice-scroll p-0">
+                          <li v-for="(brand, index) in brandStore.data" :key="index">
+                            <button type="button" class="border-0 bg-transparent"
+                              @click="getProductByData(brand.id, 'brand')">
+                              {{ brand.name }}
+                              <span class="ml-2">({{ brand.products.length }})</span>
+                            </button>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -248,12 +251,14 @@ import Breadcrumb from '@/components/home/Breadcrumb.vue';
 import { computed, onMounted, ref } from 'vue';
 import axiosConfig from '@/helpers/axiosConfig'
 import { useCategoryStore } from '@/stores/category';
+import { useBrandStore } from '@/stores/brand';
 const categoryStore = useCategoryStore()
+const brandStore = useBrandStore()
 
 const visibleProducts = ref([]);
 const totalProductCount = ref(0);
 const isLoading = ref(false);
-const productsPerLoad = ref(1);
+const productsPerLoad = ref(6);
 const currentPage = ref(1);
 const sortOption = ref('low');
 const getBy = ref({
@@ -261,49 +266,85 @@ const getBy = ref({
   id: null
 })
 
+// ✅ Số sản phẩm hiện đang hiển thị
+const currentLoadedCount = computed(() => visibleProducts.value.length);
 
+// 🟦 Hàm load thêm sản phẩm (Xem thêm)
 const loadMore = async () => {
   isLoading.value = true;
 
   try {
-    const response = await axiosConfig.get(`/products?page=${currentPage.value}&limit=${productsPerLoad.value}&sort=${sortOption.value}&getBy=${getBy.value.name}&id=${getBy.value.id}`);
+    const response = await axiosConfig.get(
+      `/products?page=${currentPage.value}&limit=${productsPerLoad.value}&sort=${sortOption.value}&getBy=${getBy.value.name}&id=${getBy.value.id}`
+    );
 
-    const data = await response.data;
-
-    console.log(data);
-
+    const data = response.data;
 
     visibleProducts.value.push(...data.products);
-    totalProductCount.value = data.total; // <-- lưu tổng số sản phẩm (ví dụ 40)
+    totalProductCount.value = data.total;
     currentPage.value += 1;
   } catch (error) {
-    console.error('Có lỗi khi tải sản phẩm:', error);
+    console.error("Có lỗi khi tải sản phẩm:", error);
   } finally {
     isLoading.value = false;
   }
 };
 
-onMounted(async () => {
-  await categoryStore.fetchCategories()
-  await loadMore();
-});
+// 🟨 Hàm load lại đúng số lượng đã hiển thị nhưng theo sort mới
+const loadUntilCount = async (targetCount) => {
+  isLoading.value = true;
+  visibleProducts.value = [];
+  currentPage.value = 1;
 
+  try {
+    while (visibleProducts.value.length < targetCount) {
+      const response = await axiosConfig.get(
+        `/products?page=${currentPage.value}&limit=${productsPerLoad.value}&sort=${sortOption.value}&getBy=${getBy.value.name}&id=${getBy.value.id}`
+      );
+
+      const data = response.data;
+
+      visibleProducts.value.push(...data.products);
+      totalProductCount.value = data.total;
+      currentPage.value += 1;
+
+      if (visibleProducts.value.length >= data.total) break;
+    }
+  } catch (error) {
+    console.error("Lỗi khi load sản phẩm khi sort:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 🟧 Khi chọn sort
 const handleSort = async (e) => {
   sortOption.value = e.target.value;
   currentPage.value = 1;
-  visibleProducts.value = [];
   totalProductCount.value = 0;
 
-  await loadMore();
-}
+  await loadUntilCount(currentLoadedCount.value); // Load lại đúng số đã hiện
+};
 
-const getProductByCategory = async (id) => {
+// 🟩 Khi chọn theo danh mục
+const getProductByData = async (id, type) => {
   getBy.value = {
-    name: 'category',
+    name: type,
     id: id
-  }
+  };
 
+  visibleProducts.value = [];
+  totalProductCount.value = 0;
+  currentPage.value = 1;
+
+  await loadMore(); // Load lại từ đầu danh mục
+};
+
+// 🟦 Lúc đầu load danh mục và sản phẩm
+onMounted(async () => {
+  await categoryStore.fetchCategories();
+  await brandStore.fetchBrands();
   await loadMore();
-}
+});
 
 </script>
