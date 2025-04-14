@@ -9,15 +9,13 @@ import MasterLayout from '@/layouts/home/MasterLayout.vue'
 import CareerView from '@/views/home/CareerView.vue'
 import CareerDetailView from '@/views/home/CareerDetailView.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
-import DashboardView from '@/views/user/DashboardView.vue'
-import UserLayout from '@/layouts/user/UserLayout.vue'
-import RoomView from '@/views/user/RoomView.vue'
 import ProfileView from '@/views/user/ProfileView.vue'
-import CvView from '@/views/user/CvView.vue'
-import CvDetailView from '@/views/user/CvDetailView.vue'
 import NotFound from '@/components/NotFound.vue'
 import BlogView from '@/views/home/BlogView.vue'
 import ShopView from '@/views/home/ShopView.vue'
+import ProductView from '@/views/home/ProductView.vue'
+import DashboardView from '@/views/user/DashboardView.vue'
+import RoomView from '@/views/user/RoomView.vue'
 
 const routes = [{
 		path: '/',
@@ -62,46 +60,61 @@ const routes = [{
 				component: ShopView
 			},
 			{
+				path: 'product/:id',
+				name: 'product-detail',
+				component: ProductView
+			},
+			{
+				path: 'user',
+				name: 'user',
+				component: ProfileView
+			},
+			{
+				path: 'dashboard',
+				name: 'dashboard',
+				component: RoomView,
+			},
+			{
 				path: ':pathMatch(.*)*',
 				name: 'NotFound',
 				component: NotFound
 			}
 		]
 	},
-	{
-		path: '/user/',
-		component: UserLayout,
-		meta: {
-			requiresAuth: true,
-			role: ['0', '1']
-		}, // chỉ user truy cập
-		children: [{
-				path: 'dashboard',
-				name: 'dashboard',
-				component: DashboardView,
-			},
-			{
-				path: 'room',
-				name: 'room',
-				component: RoomView
-			},
-			{
-				path: 'profile',
-				name: 'profile',
-				component: ProfileView
-			},
-			{
-				path: 'new-cv',
-				name: 'cv',
-				component: CvView
-			},
-			{
-				path: 'cv/:id',
-				name: 'cv-detail',
-				component: CvDetailView
-			}
-		]
-	},
+	// {
+	// 	path: '/user/',
+	// 	component: UserLayout,
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		role: ['0', '1']
+	// 	}, // chỉ user truy cập
+	// 	children: [{
+	// 			path: 'dashboard',
+	// 			name: 'dashboard',
+	// 			component: DashboardView,
+	// 		},
+	// 		{
+	// 			path: 'room',
+	// 			name: 'room',
+	// 			component: RoomView
+	// 		},
+	// 		{
+	// 			path: 'profile',
+	// 			name: 'profile',
+	// 			component: ProfileView
+	// 		},
+	// 		{
+	// 			path: 'new-cv',
+	// 			name: 'cv',
+	// 			component: CvView
+	// 		},
+	// 		{
+	// 			path: 'cv/:id',
+	// 			name: 'cv-detail',
+	// 			component: CvDetailView
+	// 		}
+	// 	]
+	// },
 
 	// {
 	//     path: '/standby',
@@ -126,6 +139,16 @@ const router = createRouter({
 	history: createWebHistory(
 		import.meta.env.BASE_URL),
 	routes,
+	scrollBehavior(to, from, savedPosition) {
+		// Nếu có vị trí lưu (quay lại từ browser), scroll đến đó
+		if (savedPosition) {
+			return savedPosition
+		}
+
+		return {
+			top: 0
+		}
+	}
 })
 
 router.beforeEach(async (to, from, next) => {

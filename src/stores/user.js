@@ -16,6 +16,7 @@ export const useUserStore = defineStore('user', () => {
     id: null,
     name: '',
     email: '',
+    created_at: '',
     user_info: {
       phone: '',
       address: '',
@@ -23,7 +24,6 @@ export const useUserStore = defineStore('user', () => {
       location: '',
       description: ''
     },
-    user_cvs: []
   })
 
   async function fetchUser() {
@@ -35,6 +35,7 @@ export const useUserStore = defineStore('user', () => {
       data.value.id = user.id
       data.value.name = user.name
       data.value.email = user.email
+      data.value.created_at = user.created_at
       data.value.user_info = {
         phone: user.user_info?.phone ?? '',
         address: user.user_info?.address ?? '',
@@ -42,7 +43,6 @@ export const useUserStore = defineStore('user', () => {
         location: user.user_info?.location ?? '',
         description: user.user_info?.description ?? ''
       }
-      data.value.user_cvs = user.user_cvs ?? []
     } catch (e) {
       console.error(e)
     } finally {
@@ -52,7 +52,20 @@ export const useUserStore = defineStore('user', () => {
 
   async function updateUserProfile() {
     try {
-      const res = await axiosConfig.post(`/user/update/${data.value.id}`, data.value)
+      const formData = new FormData();
+      formData.append('name', data.value.name);
+
+      const userInfo = data.value.user_info;
+      formData.append('user_info[phone]', userInfo.phone);
+      formData.append('user_info[address]', userInfo.address);
+      formData.append('user_info[location]', userInfo.location);
+      formData.append('user_info[description]', userInfo.description);
+
+      if (userInfo.avatar instanceof File) {
+        formData.append('user_info[avatar]', userInfo.avatar);
+      }
+
+      const res = await axiosConfig.post(`/user/update/${data.value.id}`, formData)
       toast.success(res.data.message)
       fetchUser()
     } catch (e) {

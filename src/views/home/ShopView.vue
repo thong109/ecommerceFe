@@ -1,4 +1,5 @@
 <template>
+  <Loading :isLoading="isLoading" />
   <Breadcrumb :titles="['Shop']" />
   <section class="shop spad">
     <div class="container">
@@ -203,13 +204,17 @@
                 </div>
                 <div class="product__item__text">
                   <h6>
-                    <router-link to="path">{{ product.name }}</router-link>
+                    <router-link :to="`/product/${product.id}`">{{ product.name }}</router-link>
                   </h6>
                   <div class="rating">
                     <i v-for="i in 5" :key="i"
                       :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
                   </div>
-                  <h5>${{ product.price }}</h5>
+                  <h5 v-if="product.discounted > 0">{{ formatPrice(discounted(product.price, product.discounted)) }}
+                    <span>{{ formatPrice(product.price)
+                    }}</span>
+                  </h5>
+                  <h5 v-else>{{ formatPrice(product.price) }}</h5>
                 </div>
               </div>
             </div>
@@ -252,12 +257,15 @@ import { computed, onMounted, ref } from 'vue';
 import axiosConfig from '@/helpers/axiosConfig'
 import { useCategoryStore } from '@/stores/category';
 import { useBrandStore } from '@/stores/brand';
+import { formatPrice } from '@/helpers/formatted';
+import discounted from '@/helpers/discounted';
+import Loading from '@/components/Loading.vue';
 const categoryStore = useCategoryStore()
 const brandStore = useBrandStore()
 
 const visibleProducts = ref([]);
 const totalProductCount = ref(0);
-const isLoading = ref(false);
+const isLoading = ref(true);
 const productsPerLoad = ref(6);
 const currentPage = ref(1);
 const sortOption = ref('low');

@@ -12,7 +12,7 @@
             <div class="header__top__right">
               <div class="header__top__links" v-if="authStore.token">
                 <button @click="logout" type="button">Logout</button>
-                <router-link to="/user/profile">Profile</router-link>
+                <router-link to="/user">Profile</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
               <div class="header__top__links" v-else>
@@ -35,9 +35,9 @@
         </div>
         <div class="col-lg-6 col-md-6">
           <nav class="header__menu mobile-menu">
-            <ul>
+            <ul class="m-0 p-0">
               <li class="active"><router-link to="/">Home</router-link></li>
-              <li><router-link to="shop">Shop</router-link></li>
+              <li><router-link to="/shop">Shop</router-link></li>
               <li><router-link to="/page">Pages</router-link>
                 <ul class="dropdown">
                   <li><router-link to="./about.html">About Us</router-link></li>
@@ -53,18 +53,21 @@
           </nav>
         </div>
         <div class="col-lg-3 col-md-3">
-          <div class="header__nav__option">
-            <router-link to="#" class="search-switch">
-              <i class="bi bi-search text-black"></i>
-            </router-link>
-            <router-link to="#">
+          <div class="header__nav__option d-flex align-items-center">
+            <router-link to="#" class="d-flex align-items-center">
               <i class="bi bi-heart text-black"></i>
+              <span>
+                <span class="fw-semibold wishlist">Wishlist</span>
+                <span class="d-block mt-n1 text-black-50">20</span>
+              </span>
             </router-link>
-            <router-link to="#">
+            <router-link to="#" class="d-flex align-items-center">
               <i class="bi bi-bag text-black"></i>
-              <span>0</span>
+              <span>
+                <span class="fw-semibold wishlist">Cart</span>
+                <span class="d-block mt-n1 text-black-50">$0.00</span>
+              </span>
             </router-link>
-            <div class="price">$0.00</div>
           </div>
         </div>
       </div>

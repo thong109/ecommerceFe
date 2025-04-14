@@ -1,0 +1,57 @@
+export function formatPrice(price) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(price);
+}
+
+export function formatDate(dateString) {
+  const from = new Date(dateString);
+  const to = new Date();
+
+  // Reset time để chỉ so sánh theo ngày
+  from.setHours(0, 0, 0, 0);
+  to.setHours(0, 0, 0, 0);
+
+  let years = to.getFullYear() - from.getFullYear();
+  let months = to.getMonth() - from.getMonth();
+  let days = to.getDate() - from.getDate();
+
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0); // ngày cuối tháng trước
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years <= 0 && months <= 0 && days <= 0) return '0 day';
+
+  const parts = [];
+  if (years > 0) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
+  if (months > 0) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
+  if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+
+  return parts.join(' ');
+}
+
+export const getAvatarUrl = (avatar) => {
+  if (!avatar) {
+    return 'src/assets/default-avatar.jpg' // ảnh fallback nếu không có
+  }
+
+  // Nếu là ảnh từ base64 hoặc là URL đầy đủ thì dùng trực tiếp
+  if (
+    avatar.startsWith('data:image') ||
+    avatar.startsWith('http://') ||
+    avatar.startsWith('https://')
+  ) {
+    return avatar
+  }
+
+  // Nếu là ảnh từ storage Laravel (ví dụ 'avatars/abc.jpg')
+  return `${import.meta.env.VITE_API_BASE_URL}storage/${avatar}`
+}

@@ -132,10 +132,36 @@ ol {
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 14px 30px;
+  padding: 12px 30px;
   color: #ffffff;
   background: #000000;
   letter-spacing: 4px;
+  transition: opacity .35s ease;
+  border: 1px solid #000;
+
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.primary-btn-outline {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px 30px;
+  color: #000;
+  background: transparent;
+  letter-spacing: 4px;
+  border: 1px solid #000;
+  transition: opacity .35s ease;
+
+  &:hover {
+    color: #000;
+    opacity: .7;
+  }
 }
 
 .site-btn {
@@ -487,23 +513,27 @@ ol {
 
 .header__nav__option {
   text-align: right;
-  padding: 30px 0;
+  padding: 20px 0;
 }
 
 .header__nav__option a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   margin-right: 26px;
   position: relative;
+  text-align: left;
+}
+
+.header__nav__option a .wishlist {
+  font-size: 15px;
+}
+
+.header__nav__option a i {
+  font-size: 26px;
+  margin-right: 5px;
 }
 
 .header__nav__option a span {
   color: #0d0d0d;
-  font-size: 11px;
-  position: absolute;
-  left: 5px;
-  top: 8px;
+  font-size: 14px;
 }
 
 .header__nav__option a:last-child {
@@ -1076,6 +1106,14 @@ ol {
   font-weight: 700;
 }
 
+.product__item__text h5 span {
+  color: #b7b7b7;
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 10px;
+  text-decoration: line-through;
+}
+
 .product__item__text .product__color__select {
   position: absolute;
   right: 0;
@@ -1561,9 +1599,9 @@ ol {
 
 .product__details__breadcrumb a:after {
   position: absolute;
-  right: -14px;
-  top: 0;
-  content: "";
+  right: -12px;
+  top: -1px;
+  content: "-";
 }
 
 .product__details__breadcrumb span {
@@ -1611,7 +1649,6 @@ ol {
   font-size: 15px;
   color: #f7941d;
   display: inline-block;
-  margin-right: -5px;
 }
 
 .product__details__text .rating span {
@@ -1666,7 +1703,7 @@ ol {
   cursor: pointer;
 }
 
-.product__details__option__size label.active {
+.product__details__option__size label:has(input[type="radio"]:checked) {
   background: #111111;
   color: #ffffff;
   border-color: #111111;
