@@ -100,7 +100,7 @@
                 <div class="product__details__cart__option">
                   <div class="quantity">
                     <div class="pro-qty">
-                      <input type="text" value="1" v-model="qty">
+                      <input type="text" v-model="qty">
                     </div>
                   </div>
                   <button type="button" @click="handleAddToCart(product)" class="primary-btn">add to cart</button>
@@ -203,8 +203,10 @@ const handleAddToCart = (product) => {
   console.log(selectedAttributes);
 
   // if (Object.keys(selectedAttributes.value).length === product.attributes.length) {
-  cartStore.addToCart({ ...product.value, selectedAttributes: selectedAttributes, qty: qty });
+  // Nếu tất cả thuộc tính đã được chọn, thêm vào giỏ hàng
+  cartStore.addToCart(product, selectedAttributes, qty.value);
   // } else {
+  // Nếu chưa chọn đầy đủ thuộc tính, thông báo cho người dùng
   // alert('Vui lòng chọn đầy đủ thuộc tính.');
   // }
 }
