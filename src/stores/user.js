@@ -26,6 +26,8 @@ export const useUserStore = defineStore('user', () => {
     },
   })
 
+  const usersData = ref([])
+
   async function fetchUser() {
     isLoading.value = true
     try {
@@ -73,10 +75,24 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const fetchAllUser = async () => {
+    isLoading.value = true
+    try {
+      const res = await axiosConfig.get('/users')
+      usersData.value = res.data.users
+    } catch (e) {
+      console.error(e)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   return {
     isLoading,
     data,
+    usersData,
     fetchUser,
-    updateUserProfile
+    fetchAllUser,
+    updateUserProfile,
   }
 })

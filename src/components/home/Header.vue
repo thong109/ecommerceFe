@@ -11,8 +11,9 @@
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
               <div class="header__top__links" v-if="authStore.token">
-                <button @click="logout" type="button">Logout</button>
+                <button @click="logout" type="button" class="mb-0">Logout</button>
                 <router-link to="/user">Profile</router-link>
+                <router-link v-if="Number(authStore.role) === 1" to="/admin/dashboard">Dashboard</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
               <div class="header__top__links" v-else>

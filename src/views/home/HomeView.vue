@@ -39,8 +39,7 @@
               alt="">
             <div class="p-4 hover_text h-100 d-flex flex-column justify-content-between">
               <div class="content">
-                <h4>Special Offer</h4>
-                <h5>Young Couple</h5>
+                <h5 class="mb-0 pb-0">Young Couple</h5>
               </div>
               <div class="d-flex justify-content-center">
                 <a class="primary-btn" href="#">Shop Now</a>
@@ -54,7 +53,7 @@
               alt="">
             <div class="p-4 hover_text h-100 d-flex flex-column justify-content-between">
               <div class="content">
-                <h5>girls bag</h5>
+                <h5 class="mb-0 pb-0">girls bag</h5>
               </div>
               <div class="d-flex justify-content-center">
                 <a class="primary-btn" href="#">Shop Now</a>

@@ -40,7 +40,7 @@ export function formatDate(dateString) {
 
 export const getAvatarUrl = (avatar) => {
   if (!avatar) {
-    return 'src/assets/default-avatar.jpg' // ảnh fallback nếu không có
+    return '../src/assets/default-avatar.jpg' // ảnh fallback nếu không có
   }
 
   // Nếu là ảnh từ base64 hoặc là URL đầy đủ thì dùng trực tiếp
@@ -54,4 +54,8 @@ export const getAvatarUrl = (avatar) => {
 
   // Nếu là ảnh từ storage Laravel (ví dụ 'avatars/abc.jpg')
   return `${import.meta.env.VITE_API_BASE_URL}storage/${avatar}`
+}
+
+export const randomCode = () => {
+  return Math.random().toString(36).substring(2, 12)
 }

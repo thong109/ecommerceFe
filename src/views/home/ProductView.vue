@@ -103,7 +103,7 @@
                       <input type="text" v-model="qty">
                     </div>
                   </div>
-                  <button type="button" @click="handleAddToCart(product)" class="primary-btn">add to cart</button>
+                  <button type="button" @click="handleAddToCart(product.id)" class="primary-btn">add to cart</button>
                 </div>
                 <div class="product__details__btns__option">
                   <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
@@ -198,13 +198,13 @@ const loadProduct = async (id) => {
   }
 }
 
-const handleAddToCart = (product) => {
+const handleAddToCart = (id) => {
   console.log(product);
   console.log(selectedAttributes);
 
   // if (Object.keys(selectedAttributes.value).length === product.attributes.length) {
   // Nếu tất cả thuộc tính đã được chọn, thêm vào giỏ hàng
-  cartStore.addToCart(product, selectedAttributes, qty.value);
+  cartStore.addToCart(id, selectedAttributes, qty.value);
   // } else {
   // Nếu chưa chọn đầy đủ thuộc tính, thông báo cho người dùng
   // alert('Vui lòng chọn đầy đủ thuộc tính.');

@@ -14,8 +14,13 @@ import NotFound from '@/components/NotFound.vue'
 import BlogView from '@/views/home/BlogView.vue'
 import ShopView from '@/views/home/ShopView.vue'
 import ProductView from '@/views/home/ProductView.vue'
-import DashboardView from '@/views/user/DashboardView.vue'
 import RoomView from '@/views/user/RoomView.vue'
+import AdminLayout from '@/layouts/admin/AdminLayout.vue'
+import AdminNotFound from '@/components/AdminNotFound.vue'
+import DashboardView from '@/views/admin/DashboardView.vue'
+import StaffView from '@/views/admin/StaffView.vue'
+import ClientView from '@/views/admin/ClientView.vue'
+import ProductAdminView from '@/views/admin/ProductView.vue'
 
 const routes = [{
 		path: '/',
@@ -81,58 +86,40 @@ const routes = [{
 			}
 		]
 	},
-	// {
-	// 	path: '/user/',
-	// 	component: UserLayout,
-	// 	meta: {
-	// 		requiresAuth: true,
-	// 		role: ['0', '1']
-	// 	}, // chỉ user truy cập
-	// 	children: [{
-	// 			path: 'dashboard',
-	// 			name: 'dashboard',
-	// 			component: DashboardView,
-	// 		},
-	// 		{
-	// 			path: 'room',
-	// 			name: 'room',
-	// 			component: RoomView
-	// 		},
-	// 		{
-	// 			path: 'profile',
-	// 			name: 'profile',
-	// 			component: ProfileView
-	// 		},
-	// 		{
-	// 			path: 'new-cv',
-	// 			name: 'cv',
-	// 			component: CvView
-	// 		},
-	// 		{
-	// 			path: 'cv/:id',
-	// 			name: 'cv-detail',
-	// 			component: CvDetailView
-	// 		}
-	// 	]
-	// },
-
-	// {
-	//     path: '/standby',
-	//     name: 'standby',
-	//     component: StandbyView,
-	//     meta: {
-	//         requiresAuth: true
-	//     }, // mọi người login đều được vào
-	// },
-	// {
-	//     path: '/driver',
-	//     name: 'driver',
-	//     component: DriverView,
-	//     meta: {
-	//         requiresAuth: true,
-	//         role: 'driver'
-	//     }, // chỉ driver truy cập
-	// },
+	{
+		path: '/admin/',
+		component: AdminLayout,
+		meta: {
+			requiresAuth: true,
+			role: '1'
+		},
+		children: [{
+				path: 'dashboard',
+				name: 'dashboard',
+				component: DashboardView,
+			},
+			{
+				path: 'staff',
+				name: 'staff',
+				component: StaffView,
+			},
+			{
+				path: 'client',
+				name: 'client',
+				component: ClientView,
+			},
+			{
+				path: 'product',
+				name: 'product',
+				component: ProductAdminView,
+			},
+			{
+				path: ':pathMatch(.*)*',
+				name: 'AdminNotFound',
+				component: AdminNotFound
+			}
+		]
+	}
 ]
 
 const router = createRouter({
@@ -152,56 +139,58 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-	const token = localStorage.getItem('token')
-	const role = String(localStorage.getItem('role'))
+	const token = localStorage.getItem('token');
+	const role = localStorage.getItem('role'); // không cần ép String nếu đã lưu dưới dạng string
 
-	// Không cho truy cập login / signup nếu đã login
-	if (token && (to.name === 'login' || to.name === 'signup')) {
+	// 🔒 Nếu đã đăng nhập → không cho vào login/signup
+	if (token && ['login', 'signup'].includes(to.name)) {
 		return next({
 			name: 'home'
-		})
+		});
 	}
 
-	// Cần đăng nhập
+	// 🔐 Nếu route yêu cầu đăng nhập
 	if (to.meta.requiresAuth) {
 		if (!token || !role) {
 			return next({
 				name: 'login'
-			})
+			});
 		}
 
-		// Kiểm tra quyền
-		if (Array.isArray(to.meta.role) && !to.meta.role.includes(role)) {
-			alert('Bạn không có quyền truy cập trang này!')
-			return next({
-				name: 'home'
-			})
+		// ✅ Kiểm tra quyền truy cập nếu có yêu cầu role
+		if (to.meta.role) {
+			const allowedRoles = Array.isArray(to.meta.role) ? to.meta.role : [to.meta.role];
+			if (!allowedRoles.includes(role)) {
+				return next({
+					name: 'NotFound'
+				}); // hoặc redirect về NotFound nếu muốn
+			}
 		}
 
-		// Kiểm tra token hợp lệ
-		const valid = await checkTokenAuthenticity()
-
+		// 🔑 Kiểm tra token có còn hợp lệ không
+		const valid = await checkTokenAuthenticity();
 		if (!valid) {
 			return next({
 				name: 'login'
-			})
+			});
 		}
 
-		return next()
+		return next();
 	}
 
-	next()
-})
+	// 🟢 Nếu không cần đăng nhập → cho đi
+	return next();
+});
 
 const checkTokenAuthenticity = async () => {
 	try {
-		await axiosConfig.get('/user')
-		return true
+		await axiosConfig.get('/user'); // API kiểm tra token
+		return true;
 	} catch (error) {
-		localStorage.removeItem('token')
-		localStorage.removeItem('role')
-		return false
+		localStorage.removeItem('token');
+		localStorage.removeItem('role');
+		return false;
 	}
-}
+};
 
 export default router
