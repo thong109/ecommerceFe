@@ -191,24 +191,27 @@
             </div>
           </div>
           <div class="row">
-            <div v-for="(product, index) in visibleProducts" :key="index" class="col-lg-4 col-md-6 col-sm-6">
-              <div class="product__item">
+            <div v-for="(product, index) in visibleProducts" :key="index" class="col-lg-4 col-md-6 col-sm-6 pb-4">
+              <div class="product__item d-flex flex-column justify-content-between border rounded-3 shadow-sm p-3 h-100">
                 <div class="product__item__pic d-block position-relative">
-                  <img :src="product.image"
+                  <img :src="getAvatarUrl(product.image)"
                     class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 "
                     :alt="product.name" loading="eager">
+                  <span class="label text-white">{{ product.discounted > 0 ? product.discounted : "" }}%</span>
                   <ul class="product__hover">
-                    <li><a href="#" class="bg-white"><i class="bi bi-heart text-black"></i></a></li>
-                    <li><a href="#" class="bg-white"><i class="bi bi-search text-black"></i></a></li>
+                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i class="bi bi-heart text-white"></i></a></li>
+                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i class="bi bi-search text-white"></i></a></li>
                   </ul>
                 </div>
                 <div class="product__item__text">
-                  <h6>
-                    <router-link :to="`/product/${product.id}`">{{ product.name }}</router-link>
-                  </h6>
-                  <div class="rating">
-                    <i v-for="i in 5" :key="i"
-                      :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
+                  <div class="d-block">
+                    <h6>
+                      <router-link :to="`/product/${product.id}`">{{ product.name }}</router-link>
+                    </h6>
+                    <div class="rating">
+                      <i v-for="i in 5" :key="i"
+                        :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
+                    </div>
                   </div>
                   <h5 v-if="product.discounted > 0">{{ formatPrice(discounted(product.price, product.discounted)) }}
                     <span>{{ formatPrice(product.price)
@@ -257,7 +260,7 @@ import { computed, onMounted, ref } from 'vue';
 import axiosConfig from '@/helpers/axiosConfig'
 import { useCategoryStore } from '@/stores/category';
 import { useBrandStore } from '@/stores/brand';
-import { formatPrice } from '@/helpers/formatted';
+import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
 import discounted from '@/helpers/discounted';
 import Loading from '@/components/Loading.vue';
 const categoryStore = useCategoryStore()
@@ -350,7 +353,7 @@ const getProductByData = async (id, type) => {
 
 // 🟦 Lúc đầu load danh mục và sản phẩm
 onMounted(async () => {
-  await categoryStore.fetchCategories();
+  await categoryStore.fetchProductByCategory();
   await brandStore.fetchBrands();
   await loadMore();
 });

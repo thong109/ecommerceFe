@@ -11,6 +11,20 @@ export const useProductStore = defineStore('product', () => {
 
   const productData = ref([])
 
+  const product = ref({
+    name: '',
+    quantity: '',
+    status: '',
+    price: '',
+    cost: '',
+    discounted: '',
+    tag: '',
+    image: null,
+    short_desc: '',
+    description: '',
+    brand_id: '',
+  });
+
   async function fetchProducts() {
     isLoading.value = true
     try {
@@ -23,9 +37,21 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  async function addProduct(formData, router) {
+    try {
+      await axiosConfig.post('/products/store', formData)
+      router.push('/admin/products/')
+    } catch (error) {
+      console.error('Add product error:', error)
+      throw error
+    }
+  }
+
   return {
     isLoading,
     productData,
+    product,
     fetchProducts,
+    addProduct,
   }
 })

@@ -20,7 +20,11 @@ import AdminNotFound from '@/components/AdminNotFound.vue'
 import DashboardView from '@/views/admin/DashboardView.vue'
 import StaffView from '@/views/admin/StaffView.vue'
 import ClientView from '@/views/admin/ClientView.vue'
-import ProductAdminView from '@/views/admin/ProductView.vue'
+import ProductAdminView from '@/views/admin/Product/ProductView.vue'
+import CategoryView from '@/views/admin/Category/CategoryView.vue'
+import CategoryAddView from '@/views/admin/Category/CategoryAddView.vue'
+import CategoryEditView from '@/views/admin/Category/CategoryEditView.vue'
+import ProductAddView from '@/views/admin/Product/ProductAddView.vue'
 
 const routes = [{
 		path: '/',
@@ -112,6 +116,26 @@ const routes = [{
 				path: 'product',
 				name: 'product',
 				component: ProductAdminView,
+			},
+			{
+				path: '/admin/product/add',
+				name: 'product-add',
+				component: ProductAddView,
+			},
+			{
+				path: 'category',
+				name: 'category',
+				component: CategoryView,
+			},
+			{
+				path: 'category/add',
+				name: 'category-add',
+				component: CategoryAddView,
+			},
+			{
+				path: 'category/edit/:id',
+				name: 'category-edit',
+				component: CategoryEditView,
 			},
 			{
 				path: ':pathMatch(.*)*',

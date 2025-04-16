@@ -1,7 +1,7 @@
 export function formatPrice(price) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'VND',
   }).format(price);
 }
 
@@ -40,7 +40,7 @@ export function formatDate(dateString) {
 
 export const getAvatarUrl = (avatar) => {
   if (!avatar) {
-    return '../src/assets/default-avatar.jpg' // ảnh fallback nếu không có
+    return 'https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg' // ảnh fallback nếu không có
   }
 
   // Nếu là ảnh từ base64 hoặc là URL đầy đủ thì dùng trực tiếp

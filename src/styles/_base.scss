@@ -965,7 +965,6 @@ ol {
 
 .product__item {
   overflow: hidden;
-  margin-bottom: 40px;
 }
 
 .product__item.sale .product__item__pic .label {
@@ -997,14 +996,13 @@ ol {
 }
 
 .product__item__pic .label {
-  color: #111111;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   display: inline-block;
   padding: 4px 15px 2px;
-  background: #ffffff;
+  background: rgb(212, 35, 51);
   position: absolute;
   left: 0;
   top: 20px;
@@ -1531,8 +1529,7 @@ ol {
 .product__details__pic {
   text-align: center;
   background: #f3f2ee;
-  padding: 40px 0 60px;
-  margin-bottom: 100px;
+  padding: 40px 0 100px;
 }
 
 .product__details__pic .nav-tabs {
@@ -1632,7 +1629,7 @@ ol {
 }
 
 .product__details__text {
-  text-align: center;
+  text-align: left;
 }
 
 .product__details__text h4 {

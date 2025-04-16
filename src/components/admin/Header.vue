@@ -983,6 +983,47 @@ pre code {
   margin-bottom: 10px;
 }
 
+.Choicefile {
+  display: inline-flex;
+  background: #14142B;
+  border: 1px solid #fff;
+  color: #fff;
+  width: 150px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeimg {
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-size: 25px;
+  width: 30px;
+  border: 0;
+  background: transparent;
+  color: red;
+  font-size: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+#thumbbox {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+#thumbimage {
+  width: 200px;
+  height: 200px;
+}
+
 @media (min-width: 576px) {
   .col-sm {
     -ms-flex-preferred-size: 0;
@@ -8910,15 +8951,18 @@ table {
   /* Để chiều rộng tự động thay đổi theo nội dung */
 }
 
-th, td {
+th,
+td {
   width: auto !important;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   vertical-align: middle !important;
 }
 
 .table-bordered>:not(caption)>* {
   border: 1px solid #eee !important;
+  border-bottom: 0 !important;
 }
 </style>

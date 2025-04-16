@@ -10,7 +10,7 @@
         <div v-for="(product, index) in relatedProducts" :key="index" class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
           <div class="product__item">
             <div class="product__item__pic set-bg">
-              <img :src="product.image"
+              <img :src="getAvatarUrl(product.image)"
                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 " :alt="product.name"
                 loading="eager">
               <!-- <span class="label">New</span> -->
@@ -41,7 +41,7 @@
           class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
           <div class="product__item">
             <div class="product__item__pic set-bg">
-              <img :src="product.image"
+              <img :src="getAvatarUrl(product.image)"
                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 " :alt="product.name"
                 loading="eager">
               <!-- <span class="label">New</span> -->
@@ -74,7 +74,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axiosConfig from '@/helpers/axiosConfig'
-import { formatPrice } from '@/helpers/formatted'
+import { formatPrice, getAvatarUrl } from '@/helpers/formatted'
 import discounted from '@/helpers/discounted';
 import { Swiper, SwiperSlide } from 'swiper/vue'
 

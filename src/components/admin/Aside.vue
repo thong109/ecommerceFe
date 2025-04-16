@@ -35,6 +35,12 @@
         </router-link>
       </li>
       <li>
+        <router-link class="app-menu__item" to="/admin/category">
+          <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
+          <span class="app-menu__label">Quản lý danh mục</span>
+        </router-link>
+      </li>
+      <li>
         <router-link class="app-menu__item" to="table-data-oder.html">
           <i class='app-menu__icon bx bx-task'></i>
           <span class="app-menu__label">Quản lý đơn hàng</span>

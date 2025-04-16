@@ -1,10 +1,10 @@
 <template>
-  <Loading :isLoading="userStore.isLoading" />
+  <Loading :isLoading="productStore.isLoading" />
   <div class="row">
     <div class="col-md-12">
       <div class="app-title align-items-center">
         <ul class="app-breadcrumb breadcrumb m-0">
-          <li class="breadcrumb-item"><b>Bảng điều khiển</b></li>
+          <li class="breadcrumb-item"><b>Sản phẩm</b></li>
         </ul>
         <div id="clock"></div>
       </div>
@@ -16,8 +16,8 @@
         <div class="tile-body">
           <div class="row element-button">
             <div class="col-sm-2">
-              <a class="btn btn-add btn-sm" href="form-add-nhan-vien.html" title="Thêm"><i class="bi bi-plus-lg"></i>
-                Tạo mới nhân viên</a>
+              <router-link class="btn btn-add btn-sm" to="/admin/product/add" title="Thêm"><i class="bi bi-plus-lg"></i>
+                Tạo mới sản phẩm</router-link>
             </div>
             <div class="col-sm-2">
               <a class="btn btn-delete btn-sm nhap-tu-file" type="button" title="Nhập"><i
@@ -49,30 +49,63 @@
             <colgroup>
               <col style="width: 1%">
               <col style="width: 20%">
-              <col style="width: 10%">
-              <col style="width: 30%">
+              <col style="width: 7%">
+              <col style="width: 25%">
               <col style="width: 15%">
-              <col style="width: 14%">
+              <col style="width: 15%">
+              <col style="width: 20%">
             </colgroup>
             <thead>
-              <tr>
+              <tr class="border-bottom-0">
                 <th><input type="checkbox" id="all"></th>
-                <th>Họ và tên</th>
+                <th>Tên sản phẩm</th>
                 <th class="text-center">Ảnh</th>
-                <th>Địa chỉ</th>
-                <th>SĐT</th>
+                <th>Thông tin</th>
+                <th>Giá</th>
+                <th>Chi tiết</th>
                 <th class="text-center">Tính năng</th>
               </tr>
             </thead>
-            <tbody v-if="userStore.usersData.length > 0">
-              <tr v-for="user in userStore.usersData" :key="user.id">
-                <td><input type="checkbox" name="check1" value="1"></td>
-                <td>{{ user.name }}</td>
-                <td><img class="img-card-person" :src="getAvatarUrl(user.user_info.avatar)" :alt="user.name"></td>
-                <td>{{ user.user_info.address }}</td>
-                <td>{{ user.user_info.phone }}</td>
+            <tbody v-if="productStore.productData.length > 0">
+              <tr v-for="product in productStore.productData" :key="product.id">
+                <td><input type="checkbox" name="check1" v-model="product.id"></td>
+                <td>{{ product.name }}</td>
+                <td><img class="img-card-person" :src="getAvatarUrl(product.image)" :alt="product.name"></td>
+                <td>
+                  <div class="row">
+                    <div class="col-12 small">
+                      <strong>Danh mục:</strong> {{ product.categoryName }}
+                    </div>
+                    <div class="col-12 small">
+                      <strong>Thương hiệu:</strong> {{ product.brandName }}
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="row">
+                    <div class="col-12 small">
+                      <strong>Giá bán:</strong> {{ formatPrice(product.price) }}
+                    </div>
+                    <div class="col-12 small">
+                      <strong>Giá nhập:</strong> {{ formatPrice(product.cost) }}
+                    </div>
+                    <div class="col-12 small">
+                      <strong>Giảm giá (%):</strong> {{ product.discounted }}%
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div v-for="(values, attrName) in product.attributes" :key="attrName">
+                    <strong class="fw-bold small">{{ attrName }}:</strong>
+                    <div class="flex flex-wrap">
+                      <span v-for="(value, index) in values" :key="index" class="p-1 small">
+                        {{ value }}
+                      </span>
+                    </div>
+                  </div>
+                </td>
                 <td class="text-center">
-                  <button type="button" @click="handleDeleteUser(user.id)"
+                  <button type="button" @click="handleDeleteProduct(product.id)"
                     class="d-inline-flex align-items-center btn btn-primary btn-sm border-0 mr-1 bg-danger mb-0"
                     title="Xóa">
                     <i class="bi bi-trash"></i>
@@ -98,18 +131,19 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
 import { onMounted } from 'vue';
-import { getAvatarUrl } from "@/helpers/formatted";
+import { formatPrice, getAvatarUrl } from "@/helpers/formatted";
 import Loading from '@/components/Loading.vue';
+import { useProductStore } from '@/stores/product';
 
-const userStore = useUserStore()
+const productStore = useProductStore()
 
 onMounted(async () => {
-  await userStore.fetchAllUser()
+  await productStore.fetchProducts()
 })
 
-const handleDeleteUser = (id) => {
+const handleDeleteProduct = (id) => {
   console.log(id);
 }
+
 </script>

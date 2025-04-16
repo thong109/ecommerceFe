@@ -56,6 +56,6 @@ const fetchAttributes = async () => {
 }
 
 onMounted(async () => {
-  await categoryStore.fetchCategories()
+  await categoryStore.fetchProductByCategory()
 })
 </script>
