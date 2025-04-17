@@ -47,9 +47,9 @@
                     <div class="col-lg-12">
                       <div class="product__details__text">
                         <h4>{{ product.name }}</h4>
-                        <div class="rating">
+                        <div class="rating mb-3">
                           <i v-for="i in 5" :key="i"
-                            :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
+                            :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star text-black'"></i>
                           <span> - 5 Reviews</span>
                         </div>
                         <h3 v-if="product.discounted > 0">
@@ -57,10 +57,10 @@
                           <span>{{ formatPrice(product.price) }}</span>
                         </h3>
                         <h3 v-else>${{ formatPrice(product.price) }}</h3>
-                        <p>{{ product.short_desc }}</p>
-                        <div class="product__details__option">
+                        <p class="mb-3">{{ product.short_desc }}</p>
+                        <div class="product__details__option mb-3">
                           <div v-for="(attribute, index) in attributes" :key="index"
-                            class="product__details__option__size">
+                            class="product__details__option__size mb-3">
                             <span>{{ attribute.attribute }}:</span>
                             <label v-for="(value, i) in attribute.values" :key="i" :for="`bg-${value}`">
                               {{ value }}
@@ -75,7 +75,8 @@
                               <input type="text" v-model="qty">
                             </div>
                           </div>
-                          <button type="button" @click="handleAddToCart(product.id)" class="primary-btn mb-0">add to
+                          <button type="button" @click="handleAddToCart(product.id, qty)"
+                            :disabled="product.quantity === 0" class="primary-btn mb-0">add to
                             cart</button>
                         </div>
                         <div class="product__details__last__option">
@@ -136,7 +137,7 @@ import axiosConfig from '@/helpers/axiosConfig'
 import discounted from '@/helpers/discounted'
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted'
 import { useCartStore } from '@/stores/cart'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -147,6 +148,14 @@ const isLoading = ref(false);
 const selectedAttributes = reactive({})
 const cartStore = useCartStore()
 const qty = ref(1)
+
+onMounted(() => {
+  loadProduct(route.params.id)
+})
+
+watch(() => route.params.id, (newId) => {
+  loadProduct(newId)
+})
 
 const loadProduct = async (id) => {
   try {
@@ -172,24 +181,18 @@ const loadProduct = async (id) => {
 }
 
 const handleAddToCart = (id) => {
-  console.log(product);
-  console.log(selectedAttributes);
+  const requiredAttributes = attributes.value.map(attr => attr.attribute)
+  const selectedKeys = Object.keys(selectedAttributes)
 
-  // if (Object.keys(selectedAttributes.value).length === product.attributes.length) {
-  // Nếu tất cả thuộc tính đã được chọn, thêm vào giỏ hàng
-  cartStore.addToCart(id, selectedAttributes, qty.value);
-  // } else {
-  // Nếu chưa chọn đầy đủ thuộc tính, thông báo cho người dùng
-  // alert('Vui lòng chọn đầy đủ thuộc tính.');
-  // }
+  const hasAllAttributes = requiredAttributes.every(attr => selectedKeys.includes(attr) && selectedAttributes[attr]);
+
+  if (!hasAllAttributes) {
+    alert('Vui lòng chọn đầy đủ thuộc tính trước khi thêm vào giỏ hàng.');
+    return;
+  }
+
+  // Nếu đầy đủ thuộc tính thì thêm vào giỏ
+  cartStore.addToCart(id, { ...selectedAttributes }, Number(qty.value));
 }
-
-onMounted(() => {
-  loadProduct(route.params.id)
-})
-
-watch(() => route.params.id, (newId) => {
-  loadProduct(newId)
-})
 
 </script>

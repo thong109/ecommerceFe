@@ -14,8 +14,8 @@
               </div>
               <div class="form-group mt-4">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Your Password" autocomplete="current-password"
-                  v-model="data.password" />
+                <input type="password" id="password" class="form-control" placeholder="Your Password"
+                  autocomplete="current-password" v-model="data.password" />
               </div>
               <button class="btn btn-primary mt-10 block w-full">Sign In</button>
               <p class="mt-6 text-center">
@@ -62,23 +62,22 @@ import axiosConfig from '@/helpers/axiosConfig';
 import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { toast } from 'vue3-toastify';
 
 const authStore = useAuthStore()
-const router = useRouter()
+const router = useRouter();
 const data = reactive({
   email: null,
   password: null
 })
 
-const handleLogin = () => {
-  axiosConfig.post('/login', data)
-    .then((response) => {
-      authStore.setUser(response.data.token, response.data.user.is_admin)
-      router.go(-1)
-    })
-    .catch((error) => {
-      console.error(error)
-      // alert(error.response.data.message)
-    })
+const handleLogin = async () => {
+  const success = await authStore.login(data)
+
+  if (success) {
+    router.go(-1)
+  } else {
+    toast.error('error')
+  }
 }
 </script>

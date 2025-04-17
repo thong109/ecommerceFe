@@ -5,6 +5,7 @@ import axiosConfig from '@/helpers/axiosConfig'
 import {
   ref
 } from 'vue'
+import { toast } from 'vue3-toastify'
 
 export const useProductStore = defineStore('product', () => {
   const isLoading = ref(true)
@@ -40,10 +41,41 @@ export const useProductStore = defineStore('product', () => {
   async function addProduct(formData, router) {
     try {
       await axiosConfig.post('/products/store', formData)
-      router.push('/admin/products/')
+      resetFormProduct()
+      router.push('/admin/product/')
     } catch (error) {
       console.error('Add product error:', error)
       throw error
+    }
+  }
+
+  async function resetFormProduct() {
+    product.value = {
+      name: '',
+      quantity: '',
+      status: '',
+      price: '',
+      cost: '',
+      discounted: '',
+      tag: '',
+      image: null,
+      short_desc: '',
+      description: '',
+      brand_id: '',
+    };
+  }
+
+  async function deleteProduct(id) {
+    isLoading.value = true
+
+    try {
+      const res = await axiosConfig.post(`/products/destroy/${id}`)
+      toast.success(res.data.message)
+      fetchProducts()
+    } catch (error) {
+      console.error(e)
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -53,5 +85,6 @@ export const useProductStore = defineStore('product', () => {
     product,
     fetchProducts,
     addProduct,
+    deleteProduct
   }
 })

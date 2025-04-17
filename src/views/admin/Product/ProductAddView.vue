@@ -48,10 +48,10 @@
               </select>
             </div>
             <div class="form-group col-md-3 ">
-              <label for="exampleSelect1" class="control-label">Thương hiệu</label>
+              <label for="exampleSelect2" class="control-label">Thương hiệu</label>
               <select class="form-control" v-model="product.brand_id">
                 <option value="" disabled>Chọn thương hiệu</option>
-                <option value="1">LV</option>
+                <option v-for="brand in brandStore.data" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
               </select>
             </div>
             <div class="form-group col-md-12">
@@ -74,8 +74,6 @@
                         }}</label>
                       </div>
                     </div>
-                    <input v-else type="text" :id="`attr-${attr.id}`" v-model="selectedAttributes[attr.id]"
-                      class="form-control" placeholder="Nhập thông tin" />
                   </div>
                 </div>
               </div>
@@ -105,7 +103,9 @@
               <textarea class="form-control resize-none" v-model="product.description"></textarea>
             </div>
 
-            <button class="btn btn-save" type="submit">Lưu lại</button>
+            <div class="col-12">
+              <button class="btn btn-small btn-outline-primary" type="submit">Lưu lại</button>
+            </div>
             <!-- <a class="btn btn-cancel" href="table-data-product.html">Hủy bỏ</a> -->
           </form>
         </div>
@@ -120,18 +120,18 @@ import { useRouter } from 'vue-router'
 import axiosConfig from '@/helpers/axiosConfig'
 import { useProductStore } from '@/stores/product'
 import { useCategoryStore } from '@/stores/category'
+import { useBrandStore } from '@/stores/brand'
 
 const selectedCategoryId = ref(null)
 const selectedAttributes = ref({})
 const productStore = useProductStore()
 const categoryStore = useCategoryStore()
+const brandStore = useBrandStore()
 const router = useRouter()
 const fileInput = ref(null)
 const previewImage = ref(null)
 const product = productStore.product
-const categories = ref([])
 const attributes = ref([])
-const attributeValues = ref({})
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
@@ -221,6 +221,7 @@ const fetchAttributes = async () => {
 
 onMounted(async () => {
   await categoryStore.fetchProductByCategory()
+  await brandStore.fetchBrands()
 })
 
 </script>

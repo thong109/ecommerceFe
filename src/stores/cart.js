@@ -11,70 +11,82 @@ import {
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    items: [],
+    cartItems: [],
+    carts: [],
+    isLoading: true
   }),
 
   actions: {
-    async addToCart(id, selectedAttributes, qty) {
-      const quantity = Number(qty);
-      const rawAttributes = toRaw(selectedAttributes);
+    async addToCart(productId, selectedAttributes, qty = 1) {
+      // Tìm xem đã có sản phẩm này với đúng thuộc tính chưa
 
-      const productKey = `${id}-${JSON.stringify(rawAttributes)}`;
+      const existingItem = this.cartItems.find(item =>
+        item.id === productId &&
+        JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
+      )
 
-      // Tìm sản phẩm trong giỏ hàng theo productKey
-      let cartItem = this.items.find(item => item.productId.id === id);
-
-      if (!cartItem) {
-        // Nếu sản phẩm chưa có trong giỏ, thêm sản phẩm mới
-        this.items.push({
-          productId: {
-            id
-          }, // Lưu sản phẩm dưới dạng plain object, chứa id
-          attrs: [{
-            selectedAttributes: rawAttributes,
-            quantity,
-            productKey,
-          }]
-        });
+      if (existingItem) {
+        existingItem.qty += Number(qty)
       } else {
-        // Nếu sản phẩm đã có trong giỏ hàng, tìm thuộc tính (attrs) tương ứng
-        const existingAttrIndex = cartItem.attrs.findIndex(attr => attr.productKey === productKey);
-
-        if (existingAttrIndex !== -1) {
-          // Nếu biến thể đã tồn tại, cập nhật số lượng
-          cartItem.attrs[existingAttrIndex].quantity = quantity;
-        } else {
-          // Nếu biến thể mới, thêm vào attrs
-          cartItem.attrs.push({
-            selectedAttributes: rawAttributes,
-            quantity,
-            productKey,
-          });
-        }
+        // Tạo mới item (tuỳ bạn truyền thêm name, image, price... từ component vào cũng được)
+        this.cartItems.push({
+          id: productId,
+          selectedAttributes: {
+            ...selectedAttributes
+          },
+          qty: Number(qty)
+        })
       }
 
       // Lưu giỏ hàng vào localStorage sau khi chuyển đổi thành chuỗi JSON
       const authStore = useAuthStore();
       if (!authStore.token) {
-        const cartData = JSON.stringify(this.items);
+        const cartData = JSON.stringify(this.cartItems);
         localStorage.setItem('cart', cartData);
       }
 
       // Gửi dữ liệu giỏ hàng lên server nếu có token
-      const res = await axiosConfig.post('/add-to-cart', toRaw(this.items));
-      console.log(res);
+      const res = await axiosConfig.post('/add-to-cart', toRaw(this.cartItems));
+      if(res) {
+        this.cartItems = []
+        this.fetchCart()
+      }
     },
-    removeFromCart(productId) {
-      this.items = this.items.filter(item => item.product.id !== productId);
+    async removeFromCart(productId) {
+      try {
+        const res = await axiosConfig.delete(`/carts/delete/${productId}`);
+        if (res.data.code === 200) {
+          this.fetchCart();
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
     updateQuantity(productId, quantity) {
-      const product = this.items.find(item => item.product.id === productId);
-      if (product) {
-        product.quantity = quantity;
-      }
+      try {} catch (e) {}
     },
     saveCartToLocalStorage(cart) {
       localStorage.setItem('cart', JSON.stringify(cart));
-    }
+    },
+    async fetchCart() {
+      this.isLoading = true
+      try {
+        const response = await axiosConfig.get('/carts/get')
+        this.carts = response.data
+        this.isLoading = false
+      } catch (error) {
+        this.error = 'Failed to load cart'
+        this.isLoading = false
+      }
+    },
   },
+  getters: {
+    countCartItems() {
+      return this.carts.length
+    },
+    getCartItems: (state) => state.carts,
+    totalQty: (state) => {
+      return state.carts.reduce((total, item) => total + (item.qty || 0), 0)
+    },
+  }
 });

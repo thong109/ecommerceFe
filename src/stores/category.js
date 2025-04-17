@@ -53,6 +53,7 @@ export const useCategoryStore = defineStore('category', () => {
   async function addCategory(formData, router) {
     try {
       const res = await axiosConfig.post('/categories/store', formData)
+      resetCategory()
       router.push({
         name: 'category',
       })
@@ -86,6 +87,7 @@ export const useCategoryStore = defineStore('category', () => {
     try {
       formData.append('_method', 'PUT')
       await axiosConfig.post(`/categories/update/${id}`, formData)
+      resetCategory()
       router.push({
         name: 'category'
       })

@@ -192,15 +192,18 @@
           </div>
           <div class="row">
             <div v-for="(product, index) in visibleProducts" :key="index" class="col-lg-4 col-md-6 col-sm-6 pb-4">
-              <div class="product__item d-flex flex-column justify-content-between border rounded-3 shadow-sm p-3 h-100">
+              <div
+                class="product__item d-flex flex-column justify-content-between border rounded-3 shadow-sm p-3 h-100">
                 <div class="product__item__pic d-block position-relative">
                   <img :src="getAvatarUrl(product.image)"
                     class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 "
                     :alt="product.name" loading="eager">
-                  <span class="label text-white">{{ product.discounted > 0 ? product.discounted : "" }}%</span>
+                  <span v-if="product.discounted > 0" class="label text-white">{{ product.discounted }}%</span>
                   <ul class="product__hover">
-                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i class="bi bi-heart text-white"></i></a></li>
-                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i class="bi bi-search text-white"></i></a></li>
+                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i
+                          class="bi bi-heart text-white"></i></a></li>
+                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i
+                          class="bi bi-search text-white"></i></a></li>
                   </ul>
                 </div>
                 <div class="product__item__text">
@@ -263,9 +266,9 @@ import { useBrandStore } from '@/stores/brand';
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
 import discounted from '@/helpers/discounted';
 import Loading from '@/components/Loading.vue';
+
 const categoryStore = useCategoryStore()
 const brandStore = useBrandStore()
-
 const visibleProducts = ref([]);
 const totalProductCount = ref(0);
 const isLoading = ref(true);
@@ -354,7 +357,7 @@ const getProductByData = async (id, type) => {
 // 🟦 Lúc đầu load danh mục và sản phẩm
 onMounted(async () => {
   await categoryStore.fetchProductByCategory();
-  await brandStore.fetchBrands();
+  await brandStore.fetchProductByBrand();
   await loadMore();
 });
 

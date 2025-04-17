@@ -71,7 +71,9 @@
               <textarea class="form-control" name="mota" id="mota"></textarea>
             </div> -->
 
-            <button class="btn btn-save" type="submit">Lưu lại</button>
+            <div class="col-12">
+              <button class="btn btn-small btn-outline-primary" type="submit">Lưu lại</button>
+            </div>
             <!-- <a class="btn btn-cancel" href="table-data-product.html">Hủy bỏ</a> -->
           </form>
         </div>
@@ -82,7 +84,7 @@
 
 <script setup>
 import { useCategoryStore } from '@/stores/category'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const categoryStore = useCategoryStore()
 const router = useRouter()
@@ -253,9 +255,4 @@ const submitCategory = async () => {
     alert('Có lỗi xảy ra khi thêm danh mục!')
   }
 }
-
-onMounted(async () => {
-  await categoryStore.resetCategory()
-})
-
 </script>

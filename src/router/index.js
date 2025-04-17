@@ -25,6 +25,12 @@ import CategoryView from '@/views/admin/Category/CategoryView.vue'
 import CategoryAddView from '@/views/admin/Category/CategoryAddView.vue'
 import CategoryEditView from '@/views/admin/Category/CategoryEditView.vue'
 import ProductAddView from '@/views/admin/Product/ProductAddView.vue'
+import {
+	useAuthStore
+} from '@/stores/auth'
+import BrandView from '@/views/admin/Brand/BrandView.vue'
+import BrandAddView from '@/views/admin/Brand/BrandAddView.vue'
+import CartView from '@/views/checkout/CartView.vue'
 
 const routes = [{
 		path: '/',
@@ -84,6 +90,11 @@ const routes = [{
 				component: RoomView,
 			},
 			{
+				path: 'carts',
+				name: 'carts',
+				component: CartView,
+			},
+			{
 				path: ':pathMatch(.*)*',
 				name: 'NotFound',
 				component: NotFound
@@ -95,7 +106,7 @@ const routes = [{
 		component: AdminLayout,
 		meta: {
 			requiresAuth: true,
-			role: '1'
+			role: [1]
 		},
 		children: [{
 				path: 'dashboard',
@@ -138,6 +149,21 @@ const routes = [{
 				component: CategoryEditView,
 			},
 			{
+				path: 'brand',
+				name: 'brand',
+				component: BrandView,
+			},
+			{
+				path: 'brand/add',
+				name: 'brand-add',
+				component: BrandAddView,
+			},
+			{
+				path: 'brand/edit/:id',
+				name: 'brand-edit',
+				component: BrandAddView,
+			},
+			{
 				path: ':pathMatch(.*)*',
 				name: 'AdminNotFound',
 				component: AdminNotFound
@@ -164,57 +190,45 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	const token = localStorage.getItem('token');
-	const role = localStorage.getItem('role'); // không cần ép String nếu đã lưu dưới dạng string
+	const authStore = useAuthStore();
 
-	// 🔒 Nếu đã đăng nhập → không cho vào login/signup
 	if (token && ['login', 'signup'].includes(to.name)) {
 		return next({
 			name: 'home'
 		});
 	}
 
-	// 🔐 Nếu route yêu cầu đăng nhập
 	if (to.meta.requiresAuth) {
-		if (!token || !role) {
+		if (!token) {
 			return next({
 				name: 'login'
 			});
 		}
 
-		// ✅ Kiểm tra quyền truy cập nếu có yêu cầu role
-		if (to.meta.role) {
-			const allowedRoles = Array.isArray(to.meta.role) ? to.meta.role : [to.meta.role];
-			if (!allowedRoles.includes(role)) {
+		// Nếu chưa có user → fetch
+		if (!authStore.user) {
+			await authStore.fetchUser();
+			if (!authStore.user) {
 				return next({
-					name: 'NotFound'
-				}); // hoặc redirect về NotFound nếu muốn
+					name: 'login'
+				});
 			}
 		}
 
-		// 🔑 Kiểm tra token có còn hợp lệ không
-		const valid = await checkTokenAuthenticity();
-		if (!valid) {
-			return next({
-				name: 'login'
-			});
+		// Kiểm tra role nếu cần
+		if (to.meta.role) {
+			const allowedRoles = Array.isArray(to.meta.role) ? to.meta.role : [to.meta.role];
+			if (!allowedRoles.includes(authStore.user.is_admin)) {
+				return next({
+					name: 'NotFound'
+				});
+			}
 		}
 
 		return next();
 	}
 
-	// 🟢 Nếu không cần đăng nhập → cho đi
 	return next();
 });
-
-const checkTokenAuthenticity = async () => {
-	try {
-		await axiosConfig.get('/user'); // API kiểm tra token
-		return true;
-	} catch (error) {
-		localStorage.removeItem('token');
-		localStorage.removeItem('role');
-		return false;
-	}
-};
 
 export default router

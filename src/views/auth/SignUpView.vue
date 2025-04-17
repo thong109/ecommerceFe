@@ -61,7 +61,6 @@
 import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import axiosConfig from '@/helpers/axiosConfig'
 const authStore = useAuthStore()
 
 const router = useRouter()
@@ -71,15 +70,13 @@ const data = reactive({
   password: null
 })
 
-const handleSignUp = () => {
-  axiosConfig.post('/signup', data)
-    .then((response) => {
-      authStore.setUser(response.data.token, response.data.user.is_admin)
-      router.push({ name: 'home' })
-    })
-    .catch((error) => {
-      console.error(error)
-      // alert(error.response.data.message)
-    })
+const handleSignUp = async () => {
+  const success = await authStore.register(data)
+
+  if (success) {
+    router.push({ name: 'home' })
+  } else {
+    toast.error('error')
+  }
 }
 </script>

@@ -1,35 +1,68 @@
-import { defineStore } from "pinia"
+import {
+  defineStore
+} from "pinia"
 import axiosConfig from '@/helpers/axiosConfig'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
-    role: localStorage.getItem('role') || null
+    user: null,
+    isLoading: true
   }),
   actions: {
-    setUser(token, role) {
-      this.token = token
-      this.role = role
-      localStorage.setItem('token', token)
-      localStorage.setItem('role', role)
+    async fetchUser() {
+      if (this.user) return;
+      this.isLoading = true;
+      try {
+        const res = await axiosConfig.get('/user');
+        this.user = res.data;
+        return res.data;
+      } catch (error) {
+        this.user = null;
+        localStorage.removeItem('token');
+        return null;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async login(credentials) {
+      try {
+        const res = await axiosConfig.post('/login', credentials);
+        localStorage.setItem('token', res.data.token);
+        await this.fetchUser();
+
+        return true;
+      } catch (err) {
+        console.error('Login failed:', err);
+        return false;
+      }
     },
     async logout(router) {
       try {
-        if (this.token) {
+        if (this.user) {
           const res = await axiosConfig.post('/logout', {})
           if (res) {
             router.push({
               name: 'home'
-            }) // Chỉ dùng router được truyền vào
+            })
           }
         }
       } catch (error) {
         console.error(error)
       } finally {
-        this.token = null
-        this.role = null
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
+        this.user = null;
+        localStorage.removeItem('token');
+      }
+    },
+    async register(credentials) {
+      try {
+        const res = await axiosConfig.post('/signup', credentials);
+        localStorage.setItem('token', res.data.token);
+        await this.fetchUser();
+
+        return true;
+      } catch (err) {
+        console.error('Login failed:', err);
+        return false;
       }
     }
   }

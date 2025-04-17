@@ -71,7 +71,9 @@
               <textarea class="form-control" name="mota" id="mota"></textarea>
             </div> -->
 
-            <button class="btn btn-save" type="submit">Lưu lại</button>
+            <div class="col-12">
+              <button class="btn btn-small btn-outline-primary" type="submit">Lưu lại</button>
+            </div>
             <!-- <a class="btn btn-cancel" href="table-data-product.html">Hủy bỏ</a> -->
           </form>
         </div>
@@ -108,7 +110,7 @@ const handleFileChange = (event) => {
     }
     reader.readAsDataURL(file)
 
-    category.image = file // Cập nhật ảnh vào category
+    category.value.image = file // Cập nhật ảnh vào category
   } else {
     alert('Vui lòng chọn file ảnh hợp lệ!')
   }
@@ -116,15 +118,13 @@ const handleFileChange = (event) => {
 
 const removeImage = () => {
   previewImage.value = null
-  category.image = null
+  category.value.image = null
   if (fileInput.value) {
     fileInput.value.value = '' // reset input file safely
   }
 }
 
-// Sử dụng `computed` để đảm bảo category có giá trị mặc định
 const category = computed(() => {
-  // Đảm bảo category luôn có giá trị mặc định
   previewImage.value = categoryStore.previewImage
   return categoryStore.category || { attributes: [] }
 })

@@ -1,10 +1,10 @@
 <template>
-  <Loading :isLoading="productStore.isLoading" />
+  <Loading :isLoading="brandStore.isLoading" />
   <div class="row">
     <div class="col-md-12">
       <div class="app-title align-items-center">
         <ul class="app-breadcrumb breadcrumb m-0">
-          <li class="breadcrumb-item"><b>Sản phẩm</b></li>
+          <li class="breadcrumb-item"><b>Thương hiệu</b></li>
         </ul>
         <div id="clock"></div>
       </div>
@@ -16,8 +16,8 @@
         <div class="tile-body">
           <div class="row element-button">
             <div class="col-sm-2">
-              <router-link class="btn btn-add btn-sm" to="/admin/product/add" title="Thêm"><i class="bi bi-plus-lg"></i>
-                Tạo mới sản phẩm</router-link>
+              <router-link to="/admin/brand/add" class="btn btn-add btn-sm" title="Thêm"><i class="bi bi-plus-lg"></i>
+                Tạo mới thương hiệu</router-link>
             </div>
             <div class="col-sm-2">
               <a class="btn btn-delete btn-sm nhap-tu-file" type="button" title="Nhập"><i
@@ -49,10 +49,8 @@
             <colgroup>
               <col style="width: 1%">
               <col style="width: 20%">
-              <col style="width: 7%">
+              <col style="width: 20%">
               <col style="width: 25%">
-              <col style="width: 15%">
-              <col style="width: 15%">
               <col style="width: 20%">
             </colgroup>
             <thead>
@@ -60,67 +58,38 @@
                 <th><input type="checkbox" id="all"></th>
                 <th>Tên sản phẩm</th>
                 <th class="text-center">Ảnh</th>
-                <th>Thông tin</th>
-                <th>Giá</th>
-                <th>Chi tiết</th>
+                <th class="text-center">Trạng thái</th>
                 <th class="text-center">Tính năng</th>
               </tr>
             </thead>
-            <tbody v-if="productStore.productData.length > 0">
-              <tr v-for="product in productStore.productData" :key="product.id">
-                <td><input type="checkbox" name="check1" v-model="product.id"></td>
-                <td>{{ product.name }}</td>
-                <td><img class="img-card-person" :src="getAvatarUrl(product.image)" :alt="product.name"></td>
-                <td>
-                  <div class="row">
-                    <div class="col-12 small">
-                      <strong>Danh mục:</strong> {{ product.categoryName }}
-                    </div>
-                    <div class="col-12 small">
-                      <strong>Thương hiệu:</strong> {{ product.brandName }}
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="row">
-                    <div class="col-12 small">
-                      <strong>Giá bán:</strong> {{ formatPrice(product.price) }}
-                    </div>
-                    <div class="col-12 small">
-                      <strong>Giá nhập:</strong> {{ formatPrice(product.cost) }}
-                    </div>
-                    <div class="col-12 small">
-                      <strong>Giảm giá (%):</strong> {{ product.discounted }}%
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div v-for="(values, attrName) in product.attributes" :key="attrName">
-                    <strong class="fw-bold small">{{ attrName }}:</strong>
-                    <div class="flex flex-wrap">
-                      <span v-for="(value, index) in values" :key="index" class="p-1 small">
-                        {{ value }}
-                      </span>
-                    </div>
-                  </div>
+            <tbody v-if="brandStore.data.length > 0">
+              <tr v-for="brand in brandStore.data" :key="brand.id">
+                <td><input type="checkbox" name="check1" v-model="brand.id"></td>
+                <td>{{ brand.name }}</td>
+                <td><img class="img-card-person" :src="getAvatarUrl(brand.image)" :alt="brand.name"></td>
+                <td class="text-center">
+                  <button class="px-3 py-1 border-0 badge bg-info" type="button" v-if="brand.status === 1"><i
+                      class="bi bi-eye-fill"></i></button>
+                  <button class="px-3 py-1 border-0 badge bg-danger" type="button" v-else><i
+                      class="bi bi-eye-slash-fill"></i></button>
                 </td>
                 <td class="text-center">
-                  <button type="button" @click="handleDeleteProduct(product.id)"
+                  <button type="button" @click="handleDeleteBrand(brand.id)"
                     class="d-inline-flex align-items-center btn btn-primary btn-sm border-0 mr-1 bg-danger mb-0"
                     title="Xóa">
                     <i class="bi bi-trash"></i>
                   </button>
-                  <button
+                  <router-link :to="`/admin/brand/edit/${brand.id}`"
                     class="d-inline-flex align-items-center btn btn-primary btn-sm bg-warning border-0 text-white mb-0"
                     title="Sửa">
                     <i class="bi bi-pencil-square"></i>
-                  </button>
+                  </router-link>
                 </td>
               </tr>
             </tbody>
             <tbody v-else>
               <tr>
-                <td colspan="7" class="text-center">Không tìm thấy kết quả</td>
+                <td colspan="4" class="text-center">Không tìm thấy kết quả</td>
               </tr>
             </tbody>
           </table>
@@ -132,18 +101,18 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { formatPrice, getAvatarUrl } from "@/helpers/formatted";
+import { getAvatarUrl } from "@/helpers/formatted";
 import Loading from '@/components/Loading.vue';
-import { useProductStore } from '@/stores/product';
+import { useBrandStore } from '@/stores/brand';
 
-const productStore = useProductStore()
+const brandStore = useBrandStore()
 
 onMounted(async () => {
-  await productStore.fetchProducts()
+  await brandStore.fetchBrands()
 })
 
-const handleDeleteProduct = async (id) => {
-  await productStore.deleteProduct(id)
+const handleDeleteBrand = async (id) => {
+  await brandStore.deleteBrand(id)
 }
 
 </script>

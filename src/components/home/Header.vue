@@ -9,11 +9,11 @@
             </div>
           </div>
           <div class="col-lg-6 col-md-5">
-            <div class="header__top__right">
-              <div class="header__top__links" v-if="authStore.token">
+            <div class="header__top__right" v-if="!authStore.isLoading">
+              <div class="header__top__links" v-if="authStore.user">
                 <button @click="logout" type="button" class="mb-0">Logout</button>
                 <router-link to="/user">Profile</router-link>
-                <router-link v-if="Number(authStore.role) === 1" to="/admin/dashboard">Dashboard</router-link>
+                <router-link v-if="Number(authStore.user.is_admin) === 1" to="/admin/dashboard">Dashboard</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
               <div class="header__top__links" v-else>
@@ -62,10 +62,10 @@
                 <span class="d-block mt-n1 text-black-50">20</span>
               </span>
             </router-link>
-            <router-link to="#" class="d-flex align-items-center">
+            <router-link to="/carts/" class="d-flex align-items-center">
               <i class="bi bi-bag text-black"></i>
               <span>
-                <span class="fw-semibold wishlist">Cart</span>
+                <span class="fw-semibold wishlist">Cart ({{ total }})</span>
                 <span class="d-block mt-n1 text-black-50">$0.00</span>
               </span>
             </router-link>
@@ -78,11 +78,14 @@
 </template>
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { useCartStore } from '@/stores/cart'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
+const cartStore = useCartStore()
 const authStore = useAuthStore()
-
 const router = useRouter()
+const total = computed(() => cartStore.totalQty)
 
 const logout = () => {
   authStore.logout(router)

@@ -17,18 +17,6 @@
         </router-link>
       </li>
       <li>
-        <router-link class="app-menu__item " to="/admin/staff">
-          <i class='app-menu__icon bx bx-id-card'></i>
-          <span class="app-menu__label">Quản lý nhân viên</span>
-        </router-link>
-      </li>
-      <li>
-        <router-link class="app-menu__item" to="/admin/client">
-          <i class='app-menu__icon bx bx-user-voice'></i>
-          <span class="app-menu__label">Quản lý khách hàng</span>
-        </router-link>
-      </li>
-      <li>
         <router-link class="app-menu__item" to="/admin/product">
           <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
           <span class="app-menu__label">Quản lý sản phẩm</span>
@@ -38,6 +26,24 @@
         <router-link class="app-menu__item" to="/admin/category">
           <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
           <span class="app-menu__label">Quản lý danh mục</span>
+        </router-link>
+      </li>
+      <li>
+        <router-link class="app-menu__item" to="/admin/brand">
+          <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
+          <span class="app-menu__label">Quản lý thương hiệu</span>
+        </router-link>
+      </li>
+      <li>
+        <router-link class="app-menu__item " to="/admin/staff">
+          <i class='app-menu__icon bx bx-id-card'></i>
+          <span class="app-menu__label">Quản lý nhân viên</span>
+        </router-link>
+      </li>
+      <li>
+        <router-link class="app-menu__item" to="/admin/client">
+          <i class='app-menu__icon bx bx-user-voice'></i>
+          <span class="app-menu__label">Quản lý khách hàng</span>
         </router-link>
       </li>
       <li>
