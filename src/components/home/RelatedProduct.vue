@@ -7,8 +7,8 @@
         </div>
       </div>
       <div class="row" v-if="relatedProducts.length <= 4">
-        <div v-for="(product, index) in relatedProducts" :key="index" class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-          <div class="product__item">
+        <div v-for="(product, index) in relatedProducts" :key="index" class="col-lg-3 col-md-6 col-sm-6 pb-4">
+          <div class="product__item d-flex flex-column justify-content-between border rounded-3 shadow-sm p-3 h-100">
             <div class="product__item__pic set-bg">
               <img :src="getAvatarUrl(product.image)"
                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 " :alt="product.name"
@@ -27,11 +27,7 @@
                 <i v-for="i in 5" :key="i"
                   :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
               </div>
-              <h5 v-if="product.discounted > 0">{{ formatPrice(discounted(product.price, product.discounted)) }}
-                <span>{{ formatPrice(product.price)
-                }}</span>
-              </h5>
-              <h5 v-else>{{ formatPrice(product.price) }}</h5>
+              <h5>{{ formatPrice(product.price) }}</h5>
             </div>
           </div>
         </div>
@@ -58,11 +54,7 @@
                 <i v-for="i in 5" :key="i"
                   :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
               </div>
-              <h5 v-if="product.discounted > 0">{{ formatPrice(discounted(product.price, product.discounted)) }}
-                <span>{{ formatPrice(product.price)
-                }}</span>
-              </h5>
-              <h5 v-else>{{ formatPrice(product.price) }}</h5>
+              <h5>{{ formatPrice(product.price) }}</h5>
             </div>
           </div>
         </SwiperSlide>
@@ -75,7 +67,6 @@
 import { ref, watch } from 'vue';
 import axiosConfig from '@/helpers/axiosConfig'
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted'
-import discounted from '@/helpers/discounted';
 import { Swiper, SwiperSlide } from 'swiper/vue'
 
 import 'swiper/css'

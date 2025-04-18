@@ -31,6 +31,7 @@ import {
 import BrandView from '@/views/admin/Brand/BrandView.vue'
 import BrandAddView from '@/views/admin/Brand/BrandAddView.vue'
 import CartView from '@/views/checkout/CartView.vue'
+import CheckoutView from '@/views/checkout/CheckoutView.vue'
 
 const routes = [{
 		path: '/',
@@ -93,6 +94,11 @@ const routes = [{
 				path: 'carts',
 				name: 'carts',
 				component: CartView,
+			},
+			{
+				path: 'checkout',
+				name: 'checkout',
+				component: CheckoutView,
 			},
 			{
 				path: ':pathMatch(.*)*',

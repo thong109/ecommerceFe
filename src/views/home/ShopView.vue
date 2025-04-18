@@ -1,6 +1,6 @@
 <template>
   <Loading :isLoading="isLoading" />
-  <Breadcrumb :titles="['Shop']" />
+  <Breadcrumb :titles="['Của hàng']" />
   <section class="shop spad">
     <div class="container">
       <div class="row">
@@ -18,7 +18,7 @@
               <div class="accordion" id="accordionExample">
                 <div class="card">
                   <div class="card-heading">
-                    <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+                    <a data-toggle="collapse" data-target="#collapseOne">Danh mục</a>
                   </div>
                   <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
                     <div class="card-body">
@@ -28,7 +28,7 @@
                             <button type="button" class="border-0 bg-transparent"
                               @click="getProductByData(category.id, 'category')">
                               {{ category.name }}
-                              <span class="ml-2">({{ category.products.length }})</span>
+                              <span class="ml-2">({{ category.products ? category.products.length : 0 }})</span>
                             </button>
                           </li>
                         </ul>
@@ -38,7 +38,7 @@
                 </div>
                 <div class="card">
                   <div class="card-heading">
-                    <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
+                    <a data-toggle="collapse" data-target="#collapseTwo">Thương hiệu</a>
                   </div>
                   <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
                     <div class="card-body">
@@ -48,102 +48,10 @@
                             <button type="button" class="border-0 bg-transparent"
                               @click="getProductByData(brand.id, 'brand')">
                               {{ brand.name }}
-                              <span class="ml-2">({{ brand.products.length }})</span>
+                              <span class="ml-2">({{ brand.products ? brand.products.length : 0 }})</span>
                             </button>
                           </li>
                         </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-heading">
-                    <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
-                  </div>
-                  <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
-                    <div class="card-body">
-                      <div class="shop__sidebar__price">
-                        <ul>
-                          <li><a href="#">$0.00 - $50.00</a></li>
-                          <li><a href="#">$50.00 - $100.00</a></li>
-                          <li><a href="#">$100.00 - $150.00</a></li>
-                          <li><a href="#">$150.00 - $200.00</a></li>
-                          <li><a href="#">$200.00 - $250.00</a></li>
-                          <li><a href="#">250.00+</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-heading">
-                    <a data-toggle="collapse" data-target="#collapseFour">Size</a>
-                  </div>
-                  <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
-                    <div class="card-body">
-                      <div class="shop__sidebar__size">
-                        <label for="xs">xs
-                          <input type="radio" id="xs">
-                        </label>
-                        <label for="sm">s
-                          <input type="radio" id="sm">
-                        </label>
-                        <label for="md">m
-                          <input type="radio" id="md">
-                        </label>
-                        <label for="xl">xl
-                          <input type="radio" id="xl">
-                        </label>
-                        <label for="2xl">2xl
-                          <input type="radio" id="2xl">
-                        </label>
-                        <label for="xxl">xxl
-                          <input type="radio" id="xxl">
-                        </label>
-                        <label for="3xl">3xl
-                          <input type="radio" id="3xl">
-                        </label>
-                        <label for="4xl">4xl
-                          <input type="radio" id="4xl">
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-heading">
-                    <a data-toggle="collapse" data-target="#collapseFive">Colors</a>
-                  </div>
-                  <div id="collapseFive" class="collapse show" data-parent="#accordionExample">
-                    <div class="card-body">
-                      <div class="shop__sidebar__color">
-                        <label class="c-1" for="sp-1">
-                          <input type="radio" id="sp-1">
-                        </label>
-                        <label class="c-2" for="sp-2">
-                          <input type="radio" id="sp-2">
-                        </label>
-                        <label class="c-3" for="sp-3">
-                          <input type="radio" id="sp-3">
-                        </label>
-                        <label class="c-4" for="sp-4">
-                          <input type="radio" id="sp-4">
-                        </label>
-                        <label class="c-5" for="sp-5">
-                          <input type="radio" id="sp-5">
-                        </label>
-                        <label class="c-6" for="sp-6">
-                          <input type="radio" id="sp-6">
-                        </label>
-                        <label class="c-7" for="sp-7">
-                          <input type="radio" id="sp-7">
-                        </label>
-                        <label class="c-8" for="sp-8">
-                          <input type="radio" id="sp-8">
-                        </label>
-                        <label class="c-9" for="sp-9">
-                          <input type="radio" id="sp-9">
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -175,12 +83,12 @@
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="shop__product__option__left">
-                  <p>Showing {{ visibleProducts.length }} of {{ totalProductCount }} results</p>
+                  <p>Hiển thị {{ visibleProducts.length }} trong số {{ totalProductCount }} kết quả</p>
                 </div>
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="shop__product__option__right d-flex align-items-center">
-                  <p style="flex: 0 0 auto;" class="mr-2">Sort by Price:</p>
+                  <p style="flex: 0 0 auto;" class="mr-2">Sắp xếp theo:</p>
                   <select class="form-select" @change="handleSort">
                     <option value="low">Từ thấp đến cao</option>
                     <option value="high">Từ cao đến thấp</option>
@@ -198,7 +106,7 @@
                   <img :src="getAvatarUrl(product.image)"
                     class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 end-0 bottom-0 "
                     :alt="product.name" loading="eager">
-                  <span v-if="product.discounted > 0" class="label text-white">{{ product.discounted }}%</span>
+                  <!-- <span v-if="product.discounted > 0" class="label text-white">{{ product.discounted }}%</span> -->
                   <ul class="product__hover">
                     <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i
                           class="bi bi-heart text-white"></i></a></li>
@@ -216,11 +124,7 @@
                         :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
                     </div>
                   </div>
-                  <h5 v-if="product.discounted > 0">{{ formatPrice(discounted(product.price, product.discounted)) }}
-                    <span>{{ formatPrice(product.price)
-                    }}</span>
-                  </h5>
-                  <h5 v-else>{{ formatPrice(product.price) }}</h5>
+                  <h5>{{ formatPrice(product.price) }}</h5>
                 </div>
               </div>
             </div>
@@ -240,17 +144,6 @@
           <div class="text-center mt-4" v-else>
             <p>Không còn sản phẩm nào để hiển thị</p>
           </div>
-          <!-- <div class="row">
-            <div class="col-lg-12">
-              <div class="product__pagination">
-                <a class="active" href="#">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <span>...</span>
-                <a href="#">21</a>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -264,7 +157,6 @@ import axiosConfig from '@/helpers/axiosConfig'
 import { useCategoryStore } from '@/stores/category';
 import { useBrandStore } from '@/stores/brand';
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
-import discounted from '@/helpers/discounted';
 import Loading from '@/components/Loading.vue';
 
 const categoryStore = useCategoryStore()

@@ -10,53 +10,70 @@
       <div class="tile">
         <h3 class="tile-title">Tạo mới sản phẩm</h3>
         <div class="tile-body">
-          <form class="row" @submit.prevent="submitCategory">
-            <div class="form-group col-md-3">
+          <form class="row" @submit.prevent="submitProduct">
+            <div class="form-group col-md-4">
               <label class="control-label">Tên sản phẩm</label>
-              <input class="form-control" type="text" v-model="product.name">
+              <input class="form-control" type="text" v-model="product.name" @input="clearError('name')">
+              <div class="invalid-feedback">
+                <span v-if="errors.name" class="error-text">{{ errors.name[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
               <label class="control-label">Số lượng</label>
-              <input class="form-control" type="text" v-model="product.quantity">
+              <input class="form-control" type="text" v-model="product.quantity" @input="clearError('quantity')">
+              <div class="invalid-feedback">
+                <span v-if="errors.quantity" class="error-text">{{ errors.quantity[0] }}</span>
+              </div>
             </div>
-
-            <div class="form-group col-md-3 ">
+            <div class="form-group col-md-4 ">
               <label for="exampleSelect1" class="control-label">Tình trạng</label>
-              <select class="form-control" id="exampleSelect1" v-model="product.status">
+              <select class="form-control" id="exampleSelect1" v-model="product.status" @change="clearError('status')">
                 <option disabled>-- Chọn tình trạng --</option>
                 <option value="1">Hiện</option>
                 <option value="0">Ẩn</option>
               </select>
+              <div class="invalid-feedback">
+                <span v-if="errors.status" class="error-text">{{ errors.status[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
               <label class="control-label">Giá bán</label>
-              <input class="form-control" type="text" v-model="product.price">
+              <input class="form-control" type="text" v-model="product.price" @input="clearError('price')">
+              <div class="invalid-feedback">
+                <span v-if="errors.price" class="error-text">{{ errors.price[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
               <label class="control-label">Giá vốn</label>
-              <input class="form-control" type="text" v-model="product.cost">
+              <input class="form-control" type="text" v-model="product.cost" @input="clearError('cost')">
+              <div class="invalid-feedback">
+                <span v-if="errors.cost" class="error-text">{{ errors.cost[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3">
-              <label class="control-label">Giảm giá</label>
-              <input class="form-control" type="text" v-model="product.discounted">
-            </div>
-            <div class="form-group col-md-3 ">
+            <div class="form-group col-md-4 ">
               <label for="exampleSelect1" class="control-label">Danh mục</label>
               <select v-model="selectedCategoryId" @change="fetchAttributes" class="form-control">
-                <option value="" disabled>Chọn danh mục</option>
                 <option v-for="cat in categoryStore.data" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
+              <div class="invalid-feedback">
+                <span v-if="errors.category_id" class="error-text">{{ errors.category_id[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3 ">
+            <div class="form-group col-md-4 ">
               <label for="exampleSelect2" class="control-label">Thương hiệu</label>
-              <select class="form-control" v-model="product.brand_id">
-                <option value="" disabled>Chọn thương hiệu</option>
+              <select class="form-control" v-model="product.brand_id" @change="clearError('brand_id')">
                 <option v-for="brand in brandStore.data" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
               </select>
+              <div class="invalid-feedback">
+                <span v-if="errors.brand_id" class="error-text">{{ errors.brand_id[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-8">
               <label class="control-label">Thẻ</label>
-              <input class="form-control" type="text" v-model="product.tag">
+              <input class="form-control" type="text" v-model="product.tag" @input="clearError('tag')">
+              <div class="invalid-feedback">
+                <span v-if="errors.tag" class="error-text">{{ errors.tag[0] }}</span>
+              </div>
             </div>
             <!-- Danh sách thuộc tính -->
 
@@ -69,11 +86,14 @@
                     <div class="d-flex flex-wrap align-items-center" v-if="attr.values.length">
                       <div v-for="value in attr.values" :key="value.id" class="form-check pr-3">
                         <input type="checkbox" :id="`attr-${attr.id}-value-${value.id}`" :value="value.id"
-                          v-model="selectedAttributes[attr.id]" class="form-check-input" />
+                          v-model="selectedAttributes[attr.id]" class="form-check-input" @change="clearError('attributes')"/>
                         <label :for="`attr-${attr.id}-value-${value.id}`" class="form-check-label">{{ value.value
                         }}</label>
                       </div>
                     </div>
+                  </div>
+                  <div class="invalid-feedback">
+                    <span v-if="errors.attributes" class="error-text">{{ errors.attributes[0] }}</span>
                   </div>
                 </div>
               </div>
@@ -93,14 +113,24 @@
                   <i class="bi bi-cloud-arrow-up-fill mr-2"></i>Chọn ảnh
                 </label>
               </div>
+              <div class="invalid-feedback">
+                <span v-if="errors.image" class="error-text">{{ errors.image[0] }}</span>
+              </div>
             </div>
             <div class="form-group col-md-12">
               <label class="control-label">Mô tả ngắn</label>
-              <input class="form-control resize-none" v-model="product.short_desc" />
+              <input class="form-control resize-none" v-model="product.short_desc" @input="clearError('short_desc')" />
+              <div class="invalid-feedback">
+                <span v-if="errors.short_desc" class="error-text">{{ errors.short_desc[0] }}</span>
+              </div>
             </div>
             <div class="form-group col-md-12">
               <label class="control-label">Mô tả sản phẩm</label>
-              <textarea class="form-control resize-none" v-model="product.description"></textarea>
+              <textarea class="form-control resize-none" v-model="product.description"
+                @input="clearError('description')"></textarea>
+              <div class="invalid-feedback">
+                <span v-if="errors.description" class="error-text">{{ errors.description[0] }}</span>
+              </div>
             </div>
 
             <div class="col-12">
@@ -122,7 +152,7 @@ import { useProductStore } from '@/stores/product'
 import { useCategoryStore } from '@/stores/category'
 import { useBrandStore } from '@/stores/brand'
 
-const selectedCategoryId = ref(null)
+const selectedCategoryId = ref('')
 const selectedAttributes = ref({})
 const productStore = useProductStore()
 const categoryStore = useCategoryStore()
@@ -132,8 +162,11 @@ const fileInput = ref(null)
 const previewImage = ref(null)
 const product = productStore.product
 const attributes = ref([])
+const errors = ref({});
 
 const handleFileChange = (event) => {
+  delete errors.value['image'];
+
   const file = event.target.files[0]
 
   // Kiểm tra loại file (chỉ cho phép hình ảnh)
@@ -166,7 +199,7 @@ const removeImage = () => {
   }
 }
 
-const submitCategory = async () => {
+const submitProduct = async () => {
   try {
     const formData = new FormData()
 
@@ -177,7 +210,7 @@ const submitCategory = async () => {
     })
 
     // Thêm danh mục
-    formData.append('category_id', '3')
+    formData.append('category_id', selectedCategoryId.value)
 
     // Thêm thuộc tính
     for (const attrId in selectedAttributes.value) {
@@ -195,7 +228,11 @@ const submitCategory = async () => {
     //   console.log(pair[0], pair[1])
     // }
 
-    await productStore.addProduct(formData, router)
+    const res = await productStore.addProduct(formData, router)
+    if (res && res.code === 404) {
+      errors.value = res.errors
+    }
+    return
   } catch (error) {
     console.error(error)
     alert('Có lỗi xảy ra khi thêm sản phẩm!')
@@ -204,6 +241,7 @@ const submitCategory = async () => {
 
 // Lấy các thuộc tính của danh mục đã chọn
 const fetchAttributes = async () => {
+  delete errors.value['category_id'];
   if (!selectedCategoryId.value) return
 
   try {
@@ -223,6 +261,12 @@ onMounted(async () => {
   await categoryStore.fetchProductByCategory()
   await brandStore.fetchBrands()
 })
+
+const clearError = (field) => {
+  if (productStore.product[field]) {
+    delete errors.value[field];
+  }
+};
 
 </script>
 

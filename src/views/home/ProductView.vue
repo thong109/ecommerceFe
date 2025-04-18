@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-lg-5 col-md-9">
+            <div class="col-lg-5 col-md-12 mb-md-4">
               <div class="tab-content">
                 <div class="tab-pane active" id="tabs-1" role="tabpanel">
                   <div class="product__details__pic__item">
@@ -40,7 +40,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-7 col-md-9">
+            <div class="col-lg-7 col-md-12">
               <div class="product__details__content">
                 <div class="container">
                   <div class="row">
@@ -52,11 +52,7 @@
                             :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star text-black'"></i>
                           <span> - 5 Reviews</span>
                         </div>
-                        <h3 v-if="product.discounted > 0">
-                          {{ formatPrice(discounted(product.price, product.discounted)) }}
-                          <span>{{ formatPrice(product.price) }}</span>
-                        </h3>
-                        <h3 v-else>${{ formatPrice(product.price) }}</h3>
+                        <h3>{{ formatPrice(product.price) }}</h3>
                         <p class="mb-3">{{ product.short_desc }}</p>
                         <div class="product__details__option mb-3">
                           <div v-for="(attribute, index) in attributes" :key="index"
@@ -75,7 +71,7 @@
                               <input type="text" v-model="qty">
                             </div>
                           </div>
-                          <button type="button" @click="handleAddToCart(product.id, qty)"
+                          <button type="button" @click="handleAddToCart(product.id, product.price)"
                             :disabled="product.quantity === 0" class="primary-btn mb-0">add to
                             cart</button>
                         </div>
@@ -134,8 +130,8 @@
 import RelatedProduct from '@/components/home/RelatedProduct.vue'
 import Loading from '@/components/Loading.vue'
 import axiosConfig from '@/helpers/axiosConfig'
-import discounted from '@/helpers/discounted'
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted'
+import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -147,6 +143,7 @@ const attributes = ref([])
 const isLoading = ref(false);
 const selectedAttributes = reactive({})
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 const qty = ref(1)
 
 onMounted(() => {
@@ -180,7 +177,12 @@ const loadProduct = async (id) => {
   }
 }
 
-const handleAddToCart = (id) => {
+const handleAddToCart = async (id, price) => {
+  if (!authStore.user) {
+    return router.push({
+      name: 'login'
+    })
+  }
   const requiredAttributes = attributes.value.map(attr => attr.attribute)
   const selectedKeys = Object.keys(selectedAttributes)
 
@@ -192,7 +194,7 @@ const handleAddToCart = (id) => {
   }
 
   // Nếu đầy đủ thuộc tính thì thêm vào giỏ
-  cartStore.addToCart(id, { ...selectedAttributes }, Number(qty.value));
+  await cartStore.addToCart(id, { ...selectedAttributes }, Number(price), Number(qty.value));
 }
 
 </script>

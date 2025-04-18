@@ -11,17 +11,23 @@
         <h3 class="tile-title">Tạo mới thương hiệu</h3>
         <div class="tile-body">
           <form class="row" @submit.prevent="submitBrand">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-6">
               <label class="control-label">Tên thương hiệu</label>
-              <input class="form-control" type="text" v-model="brand.name">
+              <input class="form-control" type="text" v-model="brand.name" @input="clearError('name')">
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.name" class="error-text">{{ errors.name[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3 ">
+            <div class="form-group col-md-6">
               <label for="exampleSelect1" class="control-label">Trạng thái</label>
-              <select class="form-control" id="exampleSelect1" v-model="brand.status">
+              <select class="form-control" id="exampleSelect1" v-model="brand.status" @change="clearError('status')">
                 <option disabled>-- Chọn trạng thái --</option>
                 <option value="1">Hiện</option>
                 <option value="0">Ẩn</option>
               </select>
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.status" class="error-text">{{ errors.status[0] }}</span>
+              </div>
             </div>
             <div class="form-group col-md-12">
               <div class="control-label mb-2">Ảnh thương hiệu</div>
@@ -37,6 +43,9 @@
                 <label for="uploadfile" class="Choicefile p-2 rounded-2 fw-semibold mb-0">
                   <i class="bi bi-cloud-arrow-up-fill mr-2"></i>Chọn ảnh
                 </label>
+              </div>
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.image" class="error-text">{{ errors.image[0] }}</span>
               </div>
             </div>
             <!-- <div class="form-group col-md-12">
@@ -63,9 +72,9 @@ import { useRoute, useRouter } from 'vue-router'
 const brandStore = useBrandStore()
 const router = useRouter()
 const route = useRoute()
-
 const fileInput = ref(null)
 const previewImage = ref(null)
+const errors = ref({})
 
 const brandId = computed(() => route.params.id);
 watch(() => brandStore.previewImage, (val) => {
@@ -80,6 +89,7 @@ watch(brandId, (id) => {
 }, { immediate: true });
 
 const handleFileChange = (event) => {
+  delete errors.value['image'];
   const file = event.target.files[0]
 
   // Kiểm tra loại file (chỉ cho phép hình ảnh)
@@ -123,15 +133,22 @@ const submitBrand = async () => {
     formData.append('image', brand.value.image)
   }
 
-  try {
-    if (brandId.value) {
-      await brandStore.editBrand(brandId.value, formData, router)
-    } else {
-      await brandStore.addBrand(formData, router)
+  if (brandId.value) {
+    const res = await brandStore.editBrand(brandId.value, formData, router)
+    if (res && res.code === 404) {
+      errors.value = res.errors
     }
-  } catch (error) {
-    console.error(error)
-    alert('Có lỗi xảy ra khi thêm thương hiệu!')
+  } else {
+    const res = await brandStore.addBrand(formData, router)
+    if (res && res.code === 404) {
+      errors.value = res.errors
+    }
   }
 }
+
+const clearError = (field) => {
+  if (brandStore.brand[field]) {
+    delete errors.value[field];
+  }
+};
 </script>

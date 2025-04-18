@@ -9,10 +9,10 @@
             </div>
             <div class="mt-n5">
               <h3 class="h2">
-                Look like you're lost
+                Trang không tồn tại!
               </h3>
-              <p>the page you are looking for not avaible!</p>
-              <router-link to="/" class="primary-btn">Go to Home</router-link>
+              <p>Trang không tồn tại ....</p>
+              <router-link to="/" class="primary-btn">Trang chủ</router-link>
             </div>
           </div>
         </div>

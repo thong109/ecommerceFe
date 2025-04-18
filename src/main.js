@@ -18,6 +18,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {
   useAuthStore
 } from './stores/auth'
+import {
+  useCartStore
+} from './stores/cart'
 
 const app = createApp(App)
 app.use(createPinia())
@@ -26,10 +29,13 @@ app.use(Toastify, {
   position: 'top-right',
   pauseOnHover: false,
 })
-const authStore = useAuthStore();
+const authStore = useAuthStore()
+const cartStore = useCartStore()
+
 const token = localStorage.getItem('token');
 if (token) {
   authStore.fetchUser();
+  cartStore.fetchCart()
 }
 
 app.use(router)

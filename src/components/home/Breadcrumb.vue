@@ -4,9 +4,9 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="breadcrumb__text">
-            <h4>Shop</h4>
+            <h4>Cửa hàng</h4>
             <div class="breadcrumb__links">
-              <router-link to="/">Home</router-link>
+              <router-link to="/">Trang chủ</router-link>
               <template v-for="(title, index) in titles" :key="index">
                 <router-link v-if="title.text" :to="title.url">{{ title.text }}</router-link>
                 <span v-else>{{ title }}</span>

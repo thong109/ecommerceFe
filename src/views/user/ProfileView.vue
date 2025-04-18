@@ -1,6 +1,6 @@
 <template>
   <Loading :isLoading="userStore.isLoading" />
-  <Breadcrumb :titles="['Profile']" />
+  <Breadcrumb :titles="['Cá nhân']" />
   <section class="spad">
     <div class="container">
       <div class="row">
@@ -12,9 +12,7 @@
               </div>
               <div class="avatar mt-n5">
                 <div class="avatar-wrapper position-relative" style="width: 100px; height: 100px;">
-                  <img v-if="hasImagePreview"
-                    :src="previewImage"
-                    alt="avatar"
+                  <img v-if="hasImagePreview" :src="previewImage" alt="avatar"
                     class="img-fluid w-100 h-100 object-fit-cover rounded-circle overflow-hidden border-white border bg-white">
                   <img v-else :src="getAvatarUrl(userStore.data.user_info.avatar)" alt="avatar"
                     class="img-fluid w-100 h-100 object-fit-cover rounded-circle overflow-hidden border-white border bg-white">
@@ -31,15 +29,15 @@
               </div>
               <h5 class="my-3">{{ userStore.data.name }}</h5>
               <div class="d-flex flex-column gap-2 justify-content-center mb-2">
-                <button type="button" class="w-100 primary-btn">Follow</button>
-                <router-link to="path" class="w-100 primary-btn-outline">Edit Profile</router-link>
+                <!-- <button type="button" class="w-100 primary-btn">Follow</button> -->
+                <router-link to="path" class="w-100 primary-btn-outline">Chỉnh sửa thông tin</router-link>
               </div>
               <p class="text-muted mb-1"><i class="bi bi-calendar-check me-1"></i>{{
                 formatDate(userStore.data.created_at) }}</p>
               <p v-if="userStore.data.user_info.address" class="text-muted mb-4"><i
                   class="bi bi-geo-alt-fill me-1"></i>{{
                     userStore.data.user_info.address }}</p>
-              <p v-else class="text-muted mb-4"><i class="bi bi-geo-alt-fill me-1"></i>Not provided yet</p>
+              <p v-else class="text-muted mb-4"><i class="bi bi-geo-alt-fill me-1"></i>Chưa cập nhật</p>
             </div>
           </div>
         </div>
@@ -50,10 +48,10 @@
               <hr>
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Full Name</p>
+                  <p class="mb-0">Họ tên</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">Johnatan Smith</p>
+                  <p class="text-muted mb-0">{{ userStore.data.name }}</p>
                 </div>
               </div>
               <hr>

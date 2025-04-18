@@ -58,7 +58,6 @@
 </template>
 
 <script setup>
-import axiosConfig from '@/helpers/axiosConfig';
 import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';

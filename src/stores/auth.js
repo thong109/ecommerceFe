@@ -2,6 +2,9 @@ import {
   defineStore
 } from "pinia"
 import axiosConfig from '@/helpers/axiosConfig'
+import {
+  useCartStore
+} from "./cart";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -27,10 +30,13 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       try {
         const res = await axiosConfig.post('/login', credentials);
-        localStorage.setItem('token', res.data.token);
-        await this.fetchUser();
-
-        return true;
+        if (res) {
+          const cartStore = useCartStore()
+          localStorage.setItem('token', res.data.token);
+          await cartStore.fetchCart()
+          await this.fetchUser();
+          return true;
+        }
       } catch (err) {
         console.error('Login failed:', err);
         return false;
@@ -41,6 +47,8 @@ export const useAuthStore = defineStore('auth', {
         if (this.user) {
           const res = await axiosConfig.post('/logout', {})
           if (res) {
+            const cartStore = useCartStore()
+            cartStore.carts = []
             router.push({
               name: 'home'
             })

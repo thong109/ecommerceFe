@@ -2,6 +2,8 @@ export function formatPrice(price) {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(price);
 }
 
@@ -31,9 +33,9 @@ export function formatDate(dateString) {
   if (years <= 0 && months <= 0 && days <= 0) return '0 day';
 
   const parts = [];
-  if (years > 0) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
-  if (months > 0) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
-  if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+  if (years > 0) parts.push(`${years} năm`);
+  if (months > 0) parts.push(`${months} tháng`);
+  if (days > 0) parts.push(`${days} ngày`);
 
   return parts.join(' ');
 }

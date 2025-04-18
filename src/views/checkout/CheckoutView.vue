@@ -4,11 +4,11 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="breadcrumb__text">
-            <h4>Check Out</h4>
+            <h4>Thanh toán</h4>
             <div class="breadcrumb__links">
-              <a href="./index.html">Home</a>
-              <a href="./shop.html">Shop</a>
-              <span>Check Out</span>
+              <router-link to="/">Trang chủ</router-link>
+              <router-link to="/shop">Cửa hàng</router-link>
+              <span>Thanh toán</span>
             </div>
           </div>
         </div>
@@ -18,124 +18,91 @@
   <section class="checkout spad">
     <div class="container">
       <div class="checkout__form">
-        <form action="#">
+        <form @submit.prevent="handleCheckoutCart">
           <div class="row">
-            <div class="col-lg-8 col-md-6">
-              <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <a href="#">Click
-                  here</a> to enter your code</h6>
-              <h6 class="checkout__title">Billing Details</h6>
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="checkout__input">
-                    <p>Fist Name<span>*</span></p>
-                    <input type="text">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="checkout__input">
-                    <p>Last Name<span>*</span></p>
-                    <input type="text">
-                  </div>
+            <div class="col-lg-7 col-md-6 border-top">
+              <h6 class="checkout__title">Chi tiết hóa đơn</h6>
+              <div class="checkout__input">
+                <p>Họ tên<span>*</span></p>
+                <input type="text" placeholder="Họ tên" v-model="dataInfo.name" @input="clearError('name')">
+                <div class="invalid-feedback">
+                  <span v-if="errors.name" class="error-text">{{ errors.name[0] }}</span>
                 </div>
               </div>
               <div class="checkout__input">
-                <p>Country<span>*</span></p>
-                <input type="text">
-              </div>
-              <div class="checkout__input">
-                <p>Address<span>*</span></p>
-                <input type="text" placeholder="Street Address" class="checkout__input__add">
-                <input type="text" placeholder="Apartment, suite, unite ect (optinal)">
-              </div>
-              <div class="checkout__input">
-                <p>Town/City<span>*</span></p>
-                <input type="text">
-              </div>
-              <div class="checkout__input">
-                <p>Country/State<span>*</span></p>
-                <input type="text">
-              </div>
-              <div class="checkout__input">
-                <p>Postcode / ZIP<span>*</span></p>
-                <input type="text">
-              </div>
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="checkout__input">
-                    <p>Phone<span>*</span></p>
-                    <input type="text">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="checkout__input">
-                    <p>Email<span>*</span></p>
-                    <input type="text">
-                  </div>
+                <p>Email<span>*</span></p>
+                <input type="text" placeholder="Email" class="checkout__input__add" v-model="dataInfo.email"
+                  @input="clearError('email')">
+                <div class="invalid-feedback">
+                  <span v-if="errors.email" class="error-text">{{ errors.email[0] }}</span>
                 </div>
               </div>
-              <div class="checkout__input__checkbox">
-                <label for="acc">
-                  Create an account?
-                  <input type="checkbox" id="acc">
-                  <span class="checkmark"></span>
-                </label>
-                <p>Create an account by entering the information below. If you are a returning customer
-                  please login at the top of the page</p>
+              <div class="checkout__input">
+                <p>Địa chỉ<span>*</span></p>
+                <input type="text" placeholder="Địa chỉ" class="checkout__input__add" v-model="dataInfo.address"
+                  @input="clearError('address')">
+                <div class="invalid-feedback">
+                  <span v-if="errors.address" class="error-text">{{ errors.address[0] }}</span>
+                </div>
               </div>
               <div class="checkout__input">
-                <p>Account Password<span>*</span></p>
-                <input type="text">
-              </div>
-              <div class="checkout__input__checkbox">
-                <label for="diff-acc">
-                  Note about your order, e.g, special noe for delivery
-                  <input type="checkbox" id="diff-acc">
-                  <span class="checkmark"></span>
-                </label>
+                <p>Số điện thoại nhận hàng<span>*</span></p>
+                <input type="text" placeholder="Số điện thoại" v-model="dataInfo.phone" @input="clearError('phone')">
+                <div class="invalid-feedback">
+                  <span v-if="errors.phone" class="error-text">{{ errors.phone[0] }}</span>
+                </div>
               </div>
               <div class="checkout__input">
-                <p>Order notes<span>*</span></p>
-                <input type="text" placeholder="Notes about your order, e.g. special notes for delivery.">
+                <p>Ghi chú</p>
+                <input type="text" placeholder="Ghi chú đơn hàng, loại hàng,...." v-model="dataInfo.note">
               </div>
             </div>
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-5 col-md-6">
               <div class="checkout__order">
-                <h4 class="order__title">Your order</h4>
-                <div class="checkout__order__products">Product <span>Total</span></div>
-                <ul class="checkout__total__products">
-                  <li>01. Vanilla salted caramel <span>$ 300.0</span></li>
-                  <li>02. German chocolate <span>$ 170.0</span></li>
-                  <li>03. Sweet autumn <span>$ 170.0</span></li>
-                  <li>04. Cluten free mini dozen <span>$ 110.0</span></li>
+                <h4 class="order__title">Đơn hàng của bạn</h4>
+                <div class="checkout__order__products fw-bold">Sản phẩm <span>Tổng</span></div>
+                <ul class="checkout__total__products p-0">
+                  <li v-for="(cart, index) in cartStore.carts" :key="index" class="row">
+                    <div class="col-6">{{ cart.product.name }}</div>
+                    <div class="col-2">
+                      <b>x{{ cart.qty }}</b>
+                    </div>
+                    <div class="col-4">
+                      <span>{{ formatPrice(cart.price) }}</span>
+                    </div>
+                  </li>
                 </ul>
                 <ul class="checkout__total__all">
-                  <li>Subtotal <span>$750.99</span></li>
-                  <li>Total <span>$750.99</span></li>
+                  <li v-if="discount.valid">Giảm giá
+                    <span v-if="discount.type === 'fixed'">{{ formatPrice(discount.discount) }}</span>
+                    <span v-else>{{ discount.discount }}%</span>
+                  </li>
+                  <li>Tổng <span>
+                      {{ !discount.valid ?
+                        formatPrice(cartStore.totalPrice) :
+                        formatPrice(cartStore.discountedTotalPrice) }}
+                    </span></li>
                 </ul>
                 <div class="checkout__input__checkbox">
-                  <label for="acc-or">
-                    Create an account?
-                    <input type="checkbox" id="acc-or">
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adip elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua.</p>
-                <div class="checkout__input__checkbox">
                   <label for="payment">
-                    Check Payment
-                    <input type="checkbox" id="payment">
+                    Thanh toán khi nhận hàng
+                    <input type="radio" id="payment" name="payment" v-model="dataInfo.paymentMethod" value="1"
+                      @change="clearError('paymentMethod')">
                     <span class="checkmark"></span>
                   </label>
                 </div>
                 <div class="checkout__input__checkbox">
                   <label for="paypal">
-                    Paypal
-                    <input type="checkbox" id="paypal">
+                    Chuyển khoản
+                    <input type="radio" id="paypal" name="payment" v-model="dataInfo.paymentMethod" value="0"
+                      @change="clearError('paymentMethod')">
                     <span class="checkmark"></span>
                   </label>
                 </div>
-                <button type="submit" class="site-btn">PLACE ORDER</button>
+                <div class="invalid-feedback">
+                  <span v-if="errors.paymentMethod" class="error-text">{{ errors.paymentMethod[0] }}</span>
+                </div>
+                <button type="submit" class="site-btn">Thanh toán</button>
               </div>
             </div>
           </div>
@@ -144,3 +111,59 @@
     </div>
   </section>
 </template>
+
+<script setup>
+import { formatPrice } from '@/helpers/formatted';
+import { useAuthStore } from '@/stores/auth';
+import { useCartStore } from '@/stores/cart';
+import { computed, ref, watchEffect } from 'vue';
+const authStore = useAuthStore()
+const cartStore = useCartStore()
+const discount = computed(() => cartStore.discount)
+
+const dataInfo = ref({
+  name: '',
+  address: '',
+  email: '',
+  phone: '',
+  note: '',
+  paymentMethod: '',
+})
+
+const errors = ref({});
+
+const handleCheckoutCart = async () => {
+  const formData = new FormData();
+  formData.append('name', dataInfo.value.address);
+  formData.append('address', dataInfo.value.address);
+  formData.append('email', dataInfo.value.email);
+  formData.append('phone', dataInfo.value.phone);
+  formData.append('note', dataInfo.value.note);
+  formData.append('paymentMethod', dataInfo.value.paymentMethod);
+  formData.append('totalPrice', cartStore.totalPrice);
+  formData.append('discounted', JSON.stringify(cartStore.discount));
+
+  // Lấy thông tin giỏ hàng và thêm vào FormData
+  cartStore.carts.forEach(item => {
+    formData.append('cartItems[]', JSON.stringify(item));
+  });
+
+  const res = await cartStore.checkoutCart(formData)
+  if (res && res.code === 404) {
+    errors.value = res.errors
+  }
+}
+
+const clearError = (field) => {
+  if (dataInfo.value[field]) {
+    delete errors.value[field];
+  }
+};
+
+watchEffect(async () => {
+  if (authStore.user) {
+    await cartStore.fetchCart()
+    cartStore.restoreCouponFromStorage()
+  }
+})
+</script>

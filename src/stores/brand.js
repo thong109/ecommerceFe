@@ -64,8 +64,13 @@ export const useBrandStore = defineStore('brand', () => {
     try {
       const res = await axiosConfig.post('/brands/store', formData)
       router.push(`/admin/brand/edit/${res.data.brandId}`);
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        return {
+          errors: error.response.data.errors,
+          code: 404
+        }
+      }
     }
   }
 
@@ -77,8 +82,13 @@ export const useBrandStore = defineStore('brand', () => {
       router.push({
         name: 'brand'
       });
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        return {
+          errors: error.response.data.errors,
+          code: 404
+        }
+      }
     }
   }
 

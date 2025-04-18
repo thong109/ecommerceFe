@@ -11,17 +11,23 @@
         <h3 class="tile-title">Tạo mới danh mục</h3>
         <div class="tile-body">
           <form class="row" @submit.prevent="submitCategory">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-6">
               <label class="control-label">Tên danh mục</label>
-              <input class="form-control" type="text" v-model="category.name">
+              <input class="form-control" type="text" v-model="category.name" @input="clearError('name')">
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.name" class="error-text">{{ errors.name[0] }}</span>
+              </div>
             </div>
-            <div class="form-group col-md-3 ">
+            <div class="form-group col-md-6">
               <label for="exampleSelect1" class="control-label">Tình trạng</label>
-              <select class="form-control" id="exampleSelect1" v-model="category.status">
+              <select class="form-control" id="exampleSelect1" v-model="category.status" @change="clearError('status')">
                 <option disabled>-- Chọn tình trạng --</option>
                 <option value="1">Hiện</option>
                 <option value="0">Ẩn</option>
               </select>
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.status" class="error-text">{{ errors.status[0] }}</span>
+              </div>
             </div>
             <!-- Danh sách thuộc tính -->
             <div class="form-group mb-3">
@@ -49,6 +55,9 @@
               <button type="button" class="btn btn-sm btn-outline-primary mb-0" @click="addAttribute">
                 + Thêm thuộc tính
               </button>
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.attr" class="error-text">{{ errors.attr }}</span>
+              </div>
             </div>
             <div class="form-group col-md-12">
               <div class="control-label mb-2">Ảnh sản phẩm</div>
@@ -64,6 +73,9 @@
                 <label for="uploadfile" class="Choicefile p-2 rounded-2 fw-semibold mb-0">
                   <i class="bi bi-cloud-arrow-up-fill mr-2"></i>Chọn ảnh
                 </label>
+              </div>
+              <div class="invalid-feedback mt-3">
+                <span v-if="errors.image" class="error-text">{{ errors.image[0] }}</span>
               </div>
             </div>
             <!-- <div class="form-group col-md-12">
@@ -88,12 +100,13 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const categoryStore = useCategoryStore()
 const router = useRouter()
-const route = useRoute()
-
 const fileInput = ref(null)
 const previewImage = ref(null)
+const category = categoryStore.category
+const errors = ref({})
 
 const handleFileChange = (event) => {
+  delete errors.value['image'];
   const file = event.target.files[0]
 
   // Kiểm tra loại file (chỉ cho phép hình ảnh)
@@ -125,8 +138,6 @@ const removeImage = () => {
     fileInput.value.value = '' // reset input file safely
   }
 }
-
-const category = categoryStore.category
 
 const addAttribute = () => {
   category.attributes.push({
@@ -210,22 +221,22 @@ const hasEmptyAttributeNames = () => {
 
 const submitCategory = async () => {
   if (duplicateAttrIndexes.value.size > 0) {
-    alert('Tên thuộc tính bị trùng, vui lòng sửa lại.')
+    errors.value.attr = 'Tên thuộc tính bị trùng, vui lòng sửa lại.'
     return
   }
 
   if (hasDuplicateValues()) {
-    alert('Có giá trị bị trùng trong một số thuộc tính.')
+    errors.value.attr = 'Có giá trị bị trùng trong một số thuộc tính.'
     return
   }
 
   if (hasEmptyAttributeNames()) {
-    alert('Có thuộc tính chưa nhập tên, vui lòng kiểm tra.')
+    errors.value.attr = 'Có thuộc tính chưa nhập tên, vui lòng kiểm tra.'
     return
   }
 
   if (hasEmptyValues()) {
-    alert('Có ô giá trị bị bỏ trống, vui lòng kiểm tra.')
+    errors.value.attr = 'Có ô giá trị bị bỏ trống, vui lòng kiểm tra.'
     return
   }
 
@@ -248,11 +259,15 @@ const submitCategory = async () => {
     })
   })
 
-  try {
-    await categoryStore.addCategory(formData, router)
-  } catch (error) {
-    console.error(error)
-    alert('Có lỗi xảy ra khi thêm danh mục!')
+  const res = await categoryStore.addCategory(formData, router)
+  if (res && res.code === 404) {
+    errors.value = res.errors
   }
 }
+
+const clearError = (field) => {
+  if (categoryStore.category[field]) {
+    delete errors.value[field];
+  }
+};
 </script>

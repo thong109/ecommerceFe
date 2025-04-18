@@ -2,18 +2,18 @@
   <header class="header">
     <div class="header__top">
       <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-6 col-md-7">
-            <div class="header__top__left">
-              <p>Free shipping, 30-day return or refund guarantee.</p>
+        <div class="row align-items-center d-md-block d-lg-flex">
+          <div class="col-lg-6 col-md-12 text-md-center mb-md-2">
+            <div class="header__top__left text-left">
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
             </div>
           </div>
-          <div class="col-lg-6 col-md-5">
-            <div class="header__top__right" v-if="!authStore.isLoading">
+          <div class="col-lg-6 col-md-12 text-md-center">
+            <div class="header__top__right d-md-flex d-lg-block justify-content-center" v-if="!authStore.isLoading">
               <div class="header__top__links" v-if="authStore.user">
-                <button @click="logout" type="button" class="mb-0">Logout</button>
-                <router-link to="/user">Profile</router-link>
-                <router-link v-if="Number(authStore.user.is_admin) === 1" to="/admin/dashboard">Dashboard</router-link>
+                <button @click="logout" type="button" class="mb-0">Đăng xuất</button>
+                <router-link to="/user">Tài khoản</router-link>
+                <router-link v-if="Number(authStore.user.is_admin) === 1" to="/admin/dashboard">Quản lý</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
               <div class="header__top__links" v-else>
@@ -27,19 +27,19 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="col-lg-3 col-md-3">
-          <div class="header__logo">
+        <div class="col-lg-3 col-md-12">
+          <div class="header__logo text-md-center pb-md-0">
             <router-link to="/">
               <img src="https://preview.colorlib.com/theme/malefashion/img/logo.png" alt="">
             </router-link>
           </div>
         </div>
-        <div class="col-lg-6 col-md-6">
-          <nav class="header__menu mobile-menu">
+        <div class="col-lg-6 col-md-12">
+          <nav class="header__menu mobile-menu pb-md-0">
             <ul class="m-0 p-0">
-              <li class="active"><router-link to="/">Home</router-link></li>
-              <li><router-link to="/shop">Shop</router-link></li>
-              <li><router-link to="/page">Pages</router-link>
+              <li class="active"><router-link to="/">Trang chủ</router-link></li>
+              <li><router-link to="/shop">Cửa hàng</router-link></li>
+              <!-- <li><router-link to="/page">Pages</router-link>
                 <ul class="dropdown">
                   <li><router-link to="./about.html">About Us</router-link></li>
                   <li><router-link to="./shop-details.html">Shop Details</router-link></li>
@@ -47,26 +47,27 @@
                   <li><router-link to="./checkout.html">Check Out</router-link></li>
                   <li><router-link to="./blog-details.html">Blog Details</router-link></li>
                 </ul>
-              </li>
-              <li><router-link to="blog">Blog</router-link></li>
-              <li><router-link to="./contact.html">Contacts</router-link></li>
+              </li> -->
+              <li><router-link to="blog">Bài viết</router-link></li>
+              <li><router-link to="./contact.html">Liên hệ</router-link></li>
             </ul>
           </nav>
         </div>
-        <div class="col-lg-3 col-md-3">
-          <div class="header__nav__option d-flex align-items-center">
-            <router-link to="#" class="d-flex align-items-center">
+        <div class="col-lg-3 col-md-12">
+          <div class="header__nav__option d-flex align-items-center justify-content-md-center">
+            <router-link to="#" class="d-flex align-items-center me-md-4">
               <i class="bi bi-heart text-black"></i>
               <span>
-                <span class="fw-semibold wishlist">Wishlist</span>
+                <span class="fw-semibold wishlist">Yêu thích</span>
                 <span class="d-block mt-n1 text-black-50">20</span>
               </span>
             </router-link>
             <router-link to="/carts/" class="d-flex align-items-center">
               <i class="bi bi-bag text-black"></i>
               <span>
-                <span class="fw-semibold wishlist">Cart ({{ total }})</span>
-                <span class="d-block mt-n1 text-black-50">$0.00</span>
+                <span v-if="cartStore" class="fw-semibold wishlist">Giỏ hàng ({{ total }})</span>
+                <span v-else class="fw-semibold wishlist">Giỏ hàng (0)</span>
+                <span class="d-block mt-n1 text-black-50">{{ formatPrice(totalPrice) }}</span>
               </span>
             </router-link>
           </div>
@@ -77,6 +78,7 @@
   </header>
 </template>
 <script setup>
+import { formatPrice } from '@/helpers/formatted'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { computed } from 'vue'
@@ -86,6 +88,7 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 const router = useRouter()
 const total = computed(() => cartStore.totalQty)
+const totalPrice = computed(() => cartStore.totalPrice)
 
 const logout = () => {
   authStore.logout(router)

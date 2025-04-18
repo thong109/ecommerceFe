@@ -89,9 +89,6 @@
                     <div class="col-12 small">
                       <strong>Giá nhập:</strong> {{ formatPrice(product.cost) }}
                     </div>
-                    <div class="col-12 small">
-                      <strong>Giảm giá (%):</strong> {{ product.discounted }}%
-                    </div>
                   </div>
                 </td>
                 <td>

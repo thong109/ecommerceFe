@@ -57,8 +57,13 @@ export const useCategoryStore = defineStore('category', () => {
       router.push({
         name: 'category',
       })
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        return {
+          errors: error.response.data.errors,
+          code: 404
+        }
+      }
     }
   }
 
@@ -68,7 +73,7 @@ export const useCategoryStore = defineStore('category', () => {
       const res = await axiosConfig.get(`/categories/show/${id}`)
 
       // Gán lại vào category form
-      
+
       category.value = {
         name: res.data.name || '',
         status: res.data.status,

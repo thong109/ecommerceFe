@@ -5,7 +5,9 @@ import axiosConfig from '@/helpers/axiosConfig'
 import {
   ref
 } from 'vue'
-import { toast } from 'vue3-toastify'
+import {
+  toast
+} from 'vue3-toastify'
 
 export const useProductStore = defineStore('product', () => {
   const isLoading = ref(true)
@@ -18,7 +20,6 @@ export const useProductStore = defineStore('product', () => {
     status: '',
     price: '',
     cost: '',
-    discounted: '',
     tag: '',
     image: null,
     short_desc: '',
@@ -44,8 +45,12 @@ export const useProductStore = defineStore('product', () => {
       resetFormProduct()
       router.push('/admin/product/')
     } catch (error) {
-      console.error('Add product error:', error)
-      throw error
+      if (error.response && error.response.data.errors) {
+        return {
+          errors: error.response.data.errors,
+          code: 404
+        }
+      }
     }
   }
 
@@ -56,7 +61,6 @@ export const useProductStore = defineStore('product', () => {
       status: '',
       price: '',
       cost: '',
-      discounted: '',
       tag: '',
       image: null,
       short_desc: '',
