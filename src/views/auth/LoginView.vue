@@ -74,7 +74,9 @@ const handleLogin = async () => {
   const success = await authStore.login(data)
 
   if (success) {
-    router.go(-1)
+    router.push({
+      name: 'home'
+    })
   } else {
     toast.error('error')
   }

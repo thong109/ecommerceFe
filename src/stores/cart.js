@@ -116,6 +116,8 @@ export const useCartStore = defineStore('cart', {
         const response = await axiosConfig.post('/checkout', formData);
         if (response.data.code === 200) {
           alert('Thanh toán thành công!');
+          this.deleteCoupon()
+          this.fetchCart()
         } else {
           alert('Thanh toán không thành công!');
         }

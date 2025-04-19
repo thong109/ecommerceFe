@@ -9,15 +9,15 @@
             </div>
           </div>
           <div class="col-lg-6 col-md-12 text-md-center">
-            <div class="header__top__right d-md-flex d-lg-block justify-content-center" v-if="!authStore.isLoading">
-              <div class="header__top__links" v-if="authStore.user">
+            <div class="header__top__right d-md-flex d-lg-block justify-content-center">
+              <div class="header__top__links" v-if="authStore.user && !authStore.isLoadHeader">
                 <button @click="logout" type="button" class="mb-0">Đăng xuất</button>
                 <router-link to="/user">Tài khoản</router-link>
                 <router-link v-if="Number(authStore.user.is_admin) === 1" to="/admin/dashboard">Quản lý</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
               <div class="header__top__links" v-else>
-                <router-link to="/login">Sign in</router-link>
+                <router-link to="/login">Đăng nhập</router-link>
                 <router-link to="#">FAQs</router-link>
               </div>
             </div>
@@ -55,11 +55,12 @@
         </div>
         <div class="col-lg-3 col-md-12">
           <div class="header__nav__option d-flex align-items-center justify-content-md-center">
-            <router-link to="#" class="d-flex align-items-center me-md-4">
+            <router-link to="/user/wishlists" class="d-flex align-items-center me-md-4">
               <i class="bi bi-heart text-black"></i>
               <span>
                 <span class="fw-semibold wishlist">Yêu thích</span>
-                <span class="d-block mt-n1 text-black-50">20</span>
+                <span v-if="authStore" class="d-block mt-n1 text-black-50">{{ authStore.wishlists.length }} sản phẩm</span>
+                <span v-else class="d-block mt-n1 text-black-50">0 sản phẩm</span>
               </span>
             </router-link>
             <router-link to="/carts/" class="d-flex align-items-center">

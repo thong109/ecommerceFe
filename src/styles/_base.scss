@@ -983,9 +983,30 @@ ol {
   color: #b7b7b7;
 }
 
-.product__item:hover .product__item__pic .product__hover {
-  right: 10px;
-  opacity: 1;
+.product__item {
+  .product__hover {
+    padding: 0;
+    margin: 0;
+  }
+
+  .product__item__pic {
+    img {
+      transition: transform .35s ease;
+    }
+  }
+
+  &:hover {
+    .product__item__pic {
+      img {
+        transform: scale(1.105);
+      }
+
+      .product__hover {
+        right: 10px;
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .product__item:hover .product__item__text .product__color__select {
@@ -1024,6 +1045,10 @@ ol {
   list-style: none;
   margin-bottom: 10px;
   position: relative;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .product__item__pic .product__hover li:hover span {
@@ -1062,6 +1087,7 @@ ol {
   z-index: -1;
 }
 
+.product__item__pic .product__hover li button,
 .product__item__pic .product__hover li a {
   background: #ffffff;
   padding: 8px 10px 5.5px;
@@ -1169,6 +1195,9 @@ ol {
 /*---------------------
   Shop
 -----------------------*/
+.shop {
+  min-height: 100vh;
+}
 
 .shop__sidebar {
   padding-right: 20px;

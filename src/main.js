@@ -32,10 +32,10 @@ app.use(Toastify, {
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 
-const token = localStorage.getItem('token');
-if (token) {
-  authStore.fetchUser();
-  cartStore.fetchCart()
+if (localStorage.getItem('token')) {
+  await authStore.fetchUser();
+  await authStore.fetchWishlist();
+  await cartStore.fetchCart()
 }
 
 app.use(router)

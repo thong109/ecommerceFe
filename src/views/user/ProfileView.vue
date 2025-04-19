@@ -1,5 +1,5 @@
 <template>
-  <Loading :isLoading="userStore.isLoading" />
+  <Loading :isLoading="authStore.isLoading" />
   <Breadcrumb :titles="['Cá nhân']" />
   <section class="spad">
     <div class="container">
@@ -14,7 +14,8 @@
                 <div class="avatar-wrapper position-relative" style="width: 100px; height: 100px;">
                   <img v-if="hasImagePreview" :src="previewImage" alt="avatar"
                     class="img-fluid w-100 h-100 object-fit-cover rounded-circle overflow-hidden border-white border bg-white">
-                  <img v-else :src="getAvatarUrl(userStore.data.user_info.avatar)" alt="avatar"
+                  <img v-else :src="authStore.user ? getAvatarUrl(authStore.user?.user_info.avatar) : getAvatarUrl()"
+                    alt="avatar"
                     class="img-fluid w-100 h-100 object-fit-cover rounded-circle overflow-hidden border-white border bg-white">
                   <div class="position-relative">
                     <input type="file" id="fileInput" hidden @change="handleFileChange" />
@@ -27,16 +28,15 @@
                   </div>
                 </div>
               </div>
-              <h5 class="my-3">{{ userStore.data.name }}</h5>
+              <h5 class="my-3">{{ authStore.user?.name }}</h5>
               <div class="d-flex flex-column gap-2 justify-content-center mb-2">
-                <!-- <button type="button" class="w-100 primary-btn">Follow</button> -->
-                <router-link to="path" class="w-100 primary-btn-outline">Chỉnh sửa thông tin</router-link>
+                <router-link to="path" class="w-100 primary-btn-outline small p-2">Chỉnh sửa thông tin</router-link>
               </div>
               <p class="text-muted mb-1"><i class="bi bi-calendar-check me-1"></i>{{
-                formatDate(userStore.data.created_at) }}</p>
-              <p v-if="userStore.data.user_info.address" class="text-muted mb-4"><i
-                  class="bi bi-geo-alt-fill me-1"></i>{{
-                    userStore.data.user_info.address }}</p>
+                formatDate(authStore.user?.created_at) }}</p>
+              <p v-if="authStore.user?.user_info.address !== 'null'" class="text-muted mb-4"><i
+                  class="bi bi-geo-alt-fill me-1"></i>
+                {{ authStore.user?.user_info.address }}</p>
               <p v-else class="text-muted mb-4"><i class="bi bi-geo-alt-fill me-1"></i>Chưa cập nhật</p>
             </div>
           </div>
@@ -51,7 +51,7 @@
                   <p class="mb-0">Họ tên</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{ userStore.data.name }}</p>
+                  <p class="text-muted mb-0">{{ authStore.user?.name }}</p>
                 </div>
               </div>
               <hr>
@@ -67,10 +67,10 @@
 import Breadcrumb from "@/components/home/Breadcrumb.vue";
 import Loading from "@/components/Loading.vue";
 import { formatDate, getAvatarUrl } from "@/helpers/formatted";
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 import { onMounted, ref } from "vue";
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const previewImage = ref('') // ảnh hiển thị
 const hasImagePreview = ref(false)
@@ -82,17 +82,26 @@ const handleFileChange = async (event) => {
   hasImagePreview.value = true;
   previewImage.value = URL.createObjectURL(selectedFile);
 
-  userStore.data.user_info.avatar = selectedFile;
+  authStore.user.user_info.avatar = selectedFile;
+  const formData = new FormData();
+  formData.append('name', authStore.user.name);
+  formData.append('user_info[phone]', authStore.user.user_info.phone);
+  formData.append('user_info[address]', authStore.user.user_info.address);
+  formData.append('user_info[location]', authStore.user.user_info.location);
+  formData.append('user_info[description]', authStore.user.user_info.description);
 
-  await userStore.updateUserProfile();
+  if (authStore.user.user_info.avatar instanceof File) {
+    formData.append('user_info[avatar]', authStore.user.user_info.avatar);
+  }
+
+  await authStore.updateUserProfile(formData);
 };
 
 onMounted(async () => {
-  await userStore.fetchUser()
+  await authStore.fetchUser()
 })
 
 const handleUpdateProfile = async () => {
-  await userStore.updateUserProfile()
 }
 
 </script>

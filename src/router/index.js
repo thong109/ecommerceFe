@@ -32,6 +32,7 @@ import BrandView from '@/views/admin/Brand/BrandView.vue'
 import BrandAddView from '@/views/admin/Brand/BrandAddView.vue'
 import CartView from '@/views/checkout/CartView.vue'
 import CheckoutView from '@/views/checkout/CheckoutView.vue'
+import WishlistView from '@/views/user/WishlistView.vue'
 
 const routes = [{
 		path: '/',
@@ -81,11 +82,6 @@ const routes = [{
 				component: ProductView
 			},
 			{
-				path: 'user',
-				name: 'user',
-				component: ProfileView
-			},
-			{
 				path: 'dashboard',
 				name: 'dashboard',
 				component: RoomView,
@@ -105,6 +101,25 @@ const routes = [{
 				name: 'NotFound',
 				component: NotFound
 			}
+		]
+	},
+	{
+		path: '/user/',
+		component: MasterLayout,
+		meta: {
+			requiresAuth: true,
+			role: [0, 1]
+		},
+		children: [{
+				path: '',
+				name: 'user',
+				component: ProfileView
+			},
+			{
+				path: 'wishlists',
+				name: 'wishlists',
+				component: WishlistView,
+			},
 		]
 	},
 	{

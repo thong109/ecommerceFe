@@ -116,11 +116,14 @@
 import { formatPrice } from '@/helpers/formatted';
 import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
+import HomeView from '../home/HomeView.vue';
+
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const discount = computed(() => cartStore.discount)
-
+const router = useRouter()
 const dataInfo = ref({
   name: '',
   address: '',
@@ -129,7 +132,6 @@ const dataInfo = ref({
   note: '',
   paymentMethod: '',
 })
-
 const errors = ref({});
 
 const handleCheckoutCart = async () => {
@@ -152,6 +154,10 @@ const handleCheckoutCart = async () => {
   if (res && res.code === 404) {
     errors.value = res.errors
   }
+
+  // if (res && res.code === 200) {
+  //   formData = new FormData();
+  // }
 }
 
 const clearError = (field) => {
@@ -166,4 +172,13 @@ watchEffect(async () => {
     cartStore.restoreCouponFromStorage()
   }
 })
+
+onMounted(() => {
+  if (cartStore.carts.length <= 0) {
+    router.push({
+      name: 'home'
+    })
+  }
+})
+
 </script>

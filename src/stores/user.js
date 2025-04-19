@@ -26,6 +26,7 @@ export const useUserStore = defineStore('user', () => {
     },
   })
 
+  const wishlists = ref([])
   const usersData = ref([])
 
   async function fetchUser() {
@@ -94,5 +95,6 @@ export const useUserStore = defineStore('user', () => {
     fetchUser,
     fetchAllUser,
     updateUserProfile,
+    fetchWishlist
   }
 })

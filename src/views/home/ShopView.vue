@@ -108,10 +108,14 @@
                     :alt="product.name" loading="eager">
                   <!-- <span v-if="product.discounted > 0" class="label text-white">{{ product.discounted }}%</span> -->
                   <ul class="product__hover">
-                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i
-                          class="bi bi-heart text-white"></i></a></li>
-                    <li><a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2"><i
-                          class="bi bi-search text-white"></i></a></li>
+                    <li>
+                      <WishlistButton :product-id="product.id" />
+                    </li>
+                    <li>
+                      <a href="#" class="bg-opacity-8 bg-dark-subtle border rounded-2">
+                        <i class="bi bi-search text-dark"></i>
+                      </a>
+                    </li>
                   </ul>
                 </div>
                 <div class="product__item__text">
@@ -158,9 +162,12 @@ import { useCategoryStore } from '@/stores/category';
 import { useBrandStore } from '@/stores/brand';
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
 import Loading from '@/components/Loading.vue';
+import { useAuthStore } from '@/stores/auth';
+import WishlistButton from '@/components/button/WishlistButton.vue';
 
 const categoryStore = useCategoryStore()
 const brandStore = useBrandStore()
+const authStore = useAuthStore()
 const visibleProducts = ref([]);
 const totalProductCount = ref(0);
 const isLoading = ref(true);
@@ -180,22 +187,35 @@ const loadMore = async () => {
   isLoading.value = true;
 
   try {
-    const response = await axiosConfig.get(
-      `/products?page=${currentPage.value}&limit=${productsPerLoad.value}&sort=${sortOption.value}&getBy=${getBy.value.name}&id=${getBy.value.id}`
-    );
+    const { data } = await axiosConfig.get('/products', {
+      params: {
+        page: currentPage.value,
+        limit: productsPerLoad.value,
+        sort: sortOption.value,
+        ...(getBy.value?.name && getBy.value?.id
+          ? { getBy: getBy.value.name, id: getBy.value.id }
+          : {})
+      }
+    });
 
-    const data = response.data;
+    if (data && Array.isArray(data.products)) {
+      const newProducts = data.products.map(product => ({
+        ...product,
+        isWishlisted: authStore.wishlists.some(w => w.product_id === product.id)
+      }));
 
-    visibleProducts.value.push(...data.products);
-    totalProductCount.value = data.total;
-    currentPage.value += 1;
+      visibleProducts.value.push(...newProducts);
+      totalProductCount.value = data.total;
+      currentPage.value += 1;
+    } else {
+      console.warn("Dữ liệu không hợp lệ:", data);
+    }
   } catch (error) {
     console.error("Có lỗi khi tải sản phẩm:", error);
   } finally {
     isLoading.value = false;
   }
 };
-
 // 🟨 Hàm load lại đúng số lượng đã hiển thị nhưng theo sort mới
 const loadUntilCount = async (targetCount) => {
   isLoading.value = true;
@@ -250,6 +270,7 @@ const getProductByData = async (id, type) => {
 onMounted(async () => {
   await categoryStore.fetchProductByCategory();
   await brandStore.fetchProductByBrand();
+  await authStore.fetchWishlist()
   await loadMore();
 });
 

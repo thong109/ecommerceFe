@@ -1,10 +1,10 @@
 <template>
   <aside class="app-sidebar" :class="toogle ? 'active' : ''">
     <div class="app-sidebar__user"><img class="app-sidebar__user-avatar rounded-5 object-fit-cover"
-        :src="getAvatarUrl(userStore.data.user_info.avatar)" width="50px" alt="User Image">
+        :src="getAvatarUrl(authStore.user.user_info.avatar)" width="50px" alt="User Image">
       <!-- https://i.pinimg.com/736x/a2/94/47/a29447c7320f68aa6c08845190e38152.jpg -->
       <div>
-        <p class="app-sidebar__user-name text-white"><b>{{ userStore.data.name }}</b></p>
+        <p class="app-sidebar__user-name text-white"><b>{{ authStore.user.name }}</b></p>
         <p class="app-sidebar__user-designation text-white">Chào mừng bạn trở lại</p>
       </div>
     </div>
@@ -90,12 +90,13 @@
 const toogle = defineModel()
 
 import { getAvatarUrl } from '@/helpers/formatted';
+import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '@/stores/user';
 import { onMounted } from 'vue';
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 onMounted(async () => {
-  await userStore.fetchUser()
+  await authStore.fetchUser()
 })
 
 </script>

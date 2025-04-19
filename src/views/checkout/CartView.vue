@@ -142,7 +142,8 @@
                 formatPrice(cartStore.totalPrice) :
                 formatPrice(cartStore.discountedTotalPrice) }}</span></li>
             </ul>
-            <router-link to="/checkout" class="primary-btn">Thanh toán</router-link>
+            <router-link v-if="cartStore.carts.length > 0" to="/checkout" class="primary-btn">Thanh toán</router-link>
+            <span v-else class="primary-btn">Dashboard</span>
           </div>
         </div>
       </div>
@@ -155,7 +156,7 @@ import Loading from '@/components/Loading.vue';
 import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
 import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
-import { computed, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
