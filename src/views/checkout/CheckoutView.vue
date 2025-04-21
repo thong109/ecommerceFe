@@ -136,7 +136,7 @@ const errors = ref({});
 
 const handleCheckoutCart = async () => {
   const formData = new FormData();
-  formData.append('name', dataInfo.value.address);
+  formData.append('name', dataInfo.value.name);
   formData.append('address', dataInfo.value.address);
   formData.append('email', dataInfo.value.email);
   formData.append('phone', dataInfo.value.phone);

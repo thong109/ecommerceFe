@@ -1,9 +1,13 @@
 <template>
-  <div class="app-title">
-    <ul class="app-breadcrumb breadcrumb side">
-      <li class="breadcrumb-item active"><a href="#"><b>Danh sách đơn hàng</b></a></li>
-    </ul>
-    <div id="clock"></div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="app-title align-items-center">
+        <ul class="app-breadcrumb breadcrumb m-0">
+          <li class="breadcrumb-item"><b>Đơn hàng</b></li>
+        </ul>
+        <div id="clock"></div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -55,24 +59,26 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr v-for="order in orders" :key="order.id">
                 <td width="10"><input type="checkbox" name="check1" value="1"></td>
-                <td>MD0837</td>
-                <td>Triệu Thanh Phú</td>
-                <td>Ghế làm việc Zuno, Bàn ăn gỗ Theresa</td>
-                <td>2</td>
-                <td>9.400.000 đ</td>
-                <td><span class="badge bg-success">Hoàn thành</span></td>
+                <td>{{ order.id }}</td>
+                <td>{{ order.shipping.shipping_name }}</td>
+                <td>
+                  <router-link :to="`/admin/order/${order.id}`" class="hover">Chi tiết đơn hàng</router-link>
+                </td>
+                <td>{{ order.order_total }}</td>
+                <td>{{ formatPrice(order.product_summary) }}</td>
+                <td>
+                  <span v-if="order.order_status !== undefined" class="badge"
+                    :class="getStatusBadgeClass(order.order_status)">
+                    {{ order.order_status_label }}
+                  </span>
+                </td>
                 <td class="text-center">
                   <button type="button"
                     class="d-inline-flex align-items-center btn btn-primary btn-sm border-0 mr-1 bg-danger mb-0"
                     title="Xóa">
                     <i class="bi bi-trash"></i>
-                  </button>
-                  <button
-                    class="d-inline-flex align-items-center btn btn-primary btn-sm bg-warning border-0 text-white mb-0"
-                    title="Sửa">
-                    <i class="bi bi-pencil-square"></i>
                   </button>
                 </td>
               </tr>
@@ -83,3 +89,49 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import axiosConfig from '@/helpers/axiosConfig'
+import { formatPrice } from '@/helpers/formatted';
+
+const orders = ref([])
+
+const fetchOrders = async () => {
+  try {
+    const res = await axiosConfig.get('/order/all')
+    orders.value = res.data.orders
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 0:
+      return 'bg-warning';
+    case 1:
+      return 'bg-info';
+    case 2:
+      return 'bg-primary';
+    case 3:
+      return 'bg-success';
+    case 4:
+      return 'bg-danger';
+    default:
+      return 'bg-secondary';
+  }
+};
+
+onMounted(async () => {
+  await fetchOrders()
+})
+</script>
+
+<style scoped lang="scss">
+.hover {
+  &:hover {
+    color: #000;
+  }
+}
+</style>

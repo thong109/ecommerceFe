@@ -29,6 +29,7 @@ import CartView from "@/views/checkout/CartView.vue";
 import CheckoutView from "@/views/checkout/CheckoutView.vue";
 import WishlistView from "@/views/user/WishlistView.vue";
 import OrderView from "@/views/admin/Order/OrderView.vue";
+import OrderDetailView from "@/views/admin/Order/OrderDetailView.vue";
 
 const routes = [
   {
@@ -188,6 +189,11 @@ const routes = [
         path: "order",
         name: "order",
         component: OrderView,
+      },
+      {
+        path: "order/:id",
+        name: "order-detail",
+        component: OrderDetailView,
       },
       {
         path: ":pathMatch(.*)*",
