@@ -95,6 +95,5 @@ export const useUserStore = defineStore('user', () => {
     fetchUser,
     fetchAllUser,
     updateUserProfile,
-    fetchWishlist
   }
 })
