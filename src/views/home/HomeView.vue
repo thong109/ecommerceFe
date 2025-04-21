@@ -42,7 +42,7 @@
                 <h5 class="mb-0 pb-0">Young Couple</h5>
               </div>
               <div class="d-flex justify-content-center">
-                <a class="primary-btn" href="#">Shop Now</a>
+                <router-link to="/shop" class="primary-btn">Shop Now</router-link>
               </div>
             </div>
           </div>
@@ -56,7 +56,7 @@
                 <h5 class="mb-0 pb-0">girls bag</h5>
               </div>
               <div class="d-flex justify-content-center">
-                <a class="primary-btn" href="#">Shop Now</a>
+                <router-link to="/shop" class="primary-btn">Shop Now</router-link>
               </div>
             </div>
           </div>
