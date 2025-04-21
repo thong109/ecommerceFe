@@ -1,217 +1,343 @@
 <template>
-  <div class="container-loader" style="background: #1a1810;">
-    <div class="left column">
-      <div class="header-loader">
-        <p>boundary supply /</p>
-        <p>
-          better than brand new second hand clothing / focus by sick apparel
-          everyday,
-        </p>
-        <p>home of (23-29)</p>
+  <div class="container-lo">
+    <div class="container-loader" style="background: #141414">
+      <div class="col-loader c-1">
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/0.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/1.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/2.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/3.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/4.jpg?1" alt="">
+        </div>
       </div>
-      <div class="link"><a href="#">all products</a></div>
-    </div>
-    <div class="right column">
-      <div class="images row w-100">
-        <div class="img-1 img col-3"></div>
-        <div class="img-2 img col-3"></div>
-        <div class="img-3 img col-3"></div>
-        <div class="img-4 img col-3"></div>
+      <div class="col-loader c-2">
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/5.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/6.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/7.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/8.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/9.jpg?1" alt="">
+        </div>
       </div>
-      <div class="header-loader">
-        <h1 class="ml12">gorgeoushe</h1>
+      <div class="col-loader c-3">
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/10.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/11.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="../../assets/hero/hero-1.jpg" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/13.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/14.jpg?1" alt="">
+        </div>
+      </div>
+      <div class="col-loader c-4">
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/15.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/16.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/17.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/18.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/19.jpg?1" alt="">
+        </div>
+      </div>
+      <div class="col-loader c-5">
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/20.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/21.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/22.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/23.jpg?1" alt="">
+        </div>
+        <div class="item">
+          <img src="https://camillemormal.com/static/media/d/load/24.jpg?1" alt="">
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-import gsap, { Power2, SteppedEase, Expo } from 'gsap'
-import anime from 'animejs'
+import { onMounted } from 'vue'
+import gsap from 'gsap'
 
-const showLoader = ref(true)
+const emit = defineEmits(['loader-finished'])
 
 onMounted(() => {
-  const alreadyShown = localStorage.getItem('loaderShown')
-  if (alreadyShown) {
-    showLoader.value = false
-    return
-  }
+  let tl = gsap.timeline({ delay: 0 })
 
-  // Chạy animation
-  const textWrapper = document.querySelector('.ml12')
-  textWrapper.innerHTML = textWrapper.textContent.replace(
-    /\S/g,
-    "<span class='letter'>$&</span>"
-  )
-
-  anime.timeline()
-    .add({
-      targets: '.ml12 .letter',
-      translateY: [100, 0],
-      translateZ: 0,
-      opacity: [0, 1],
-      easing: 'easeOutExpo',
-      duration: 2000,
-      delay: (el, i) => 2000 + 60 * i,
-    })
-
-    console.log(2);
-    
-
-  gsap.from('.left', {
+  tl.to('.col-loader', {
+    top: 0,
     duration: 3,
-    left: '-50%',
-    ease: Expo.easeInOut,
-    delay: 3.4,
+    ease: 'power4.inOut'
   })
 
-  gsap.from('.header-loader h1', {
+  tl.to('.c-1 .item', {
+    top: 0,
+    stagger: .25,
     duration: 3,
-    left: '-140%',
-    ease: Expo.easeInOut,
-    delay: 3.4,
-  })
+    ease: 'power4.inOut'
+  }, "-=2")
 
-  gsap.from('.header-loader > p', {
-    duration: 1,
-    y: 60,
-    opacity: 0,
-    ease: Power2.easeOut,
-    delay: 5.6,
-    stagger: 0.2,
-  })
+  tl.to('.c-2 .item', {
+    top: 0,
+    stagger: -.25,
+    duration: 3,
+    ease: 'power4.inOut'
+  }, "-=4")
 
-  gsap.from('.images > div', {
-    duration: 1,
-    y: 60,
-    opacity: 0,
-    ease: Power2.easeOut,
-    delay: 6,
-    stagger: 0.2,
-  })
+  tl.to('.c-3 .item', {
+    top: 0,
+    stagger: .25,
+    duration: 3,
+    ease: 'power4.inOut'
+  }, "-=4")
 
-  gsap.from('.link', {
-    duration: 1,
-    opacity: 0,
-    ease: SteppedEase.config(1),
-    repeat: -1,
-    repeatDelay: 0.2,
-    delay: 7.8,
-  })
+  tl.to('.c-4 .item', {
+    top: 0,
+    stagger: -.25,
+    duration: 3,
+    ease: 'power4.inOut'
+  }, "-=4")
 
-  localStorage.setItem('loaderShown', 'true')
+  tl.to('.c-5 .item', {
+    top: 0,
+    stagger: .25,
+    duration: 3,
+    ease: 'power4.inOut'
+  }, "-=4")
 
-  // Ẩn loader sau một khoảng thời gian
-  setTimeout(() => {
-    showLoader.value = false
-  }, 9000)
+  tl.to('.container-loader', {
+    scale: 6,
+    duration: 5,
+    ease: 'power4.inOut',
+    onComplete: () => {
+      emit('loader-finished')
+    }
+  }, "-=2")
 })
+
+
 </script>
 
-<style>
-.container-loader {
+<style lang="scss" scoped>
+img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+nav {
+  position: fixed;
+  width: 100%;
+  padding: 2.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3em;
+}
+
+.header {
+  opacity: 0;
+}
+
+.nav-item {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+
+  a {
+    position: relative;
+    top: 20px;
+    text-decoration: none;
+    color: #fff;
+    opacity: .35;
+
+    #active {
+      opacity: 1;
+    }
+  }
+}
+
+.hero {
+  position: absolute;
+  width: 95%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  color: #fff;
+}
+
+.icon,
+.icon-2 {
+  flex: 0.5;
+  padding: 0 5em;
+  font-size: 30px;
+  opacity: 0.5;
+
+  ion-icon {
+    transform: scale(0);
+  }
+}
+
+.icon-2 {
+  text-align: right;
+}
+
+.title {
+  flex: 2;
+  text-align: center;
+  font-size: 40px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+
+  p {
+    position: relative;
+    top: 50px;
+  }
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.preview {
+  position: absolute;
+  bottom: 2em;
+  right: 2em;
+  display: flex;
+  gap: .3em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+
+  img {
+    position: relative;
+    top: 100px;
+    width: 80px;
+    height: 50%;
+  }
+}
+
+.slide-num {
+  margin: 3em 0;
+  text-align: center;
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+
+  p {
+    position: relative;
+    top: 30px;
+  }
+}
+
+.container-lo {
+  width: 100vw;
   height: 100vh;
+  position: relative;
   overflow: hidden;
 }
 
-.column {
-  width: 50%;
-  height: 100vh;
-}
-
-.left {
-  position: relative;
-  left: 0;
+.container-loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: url("https://picsum.photos/200/300") no-repeat 50% 50%;
-  background-size: cover;
-  padding: 20px;
+  gap: 1em;
+
+  .col-loader {
+    position: relative;
+    flex: 1;
+    display: flex;
+    width: calc(100% / 5);
+    flex-direction: column;
+    gap: 1em;
+  }
 }
 
-.right {
-  display: flex;
-  padding: 120px 0;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.img {
-  height: 200px;
-  margin: 6px;
-}
-
-.img-1 {
-  background: url("https://picsum.photos/200/300") no-repeat 50% 50%;
-  background-size: cover;
-}
-
-.img-2 {
-  background: url("https://picsum.photos/200/300") no-repeat 50% 50%;
-  background-size: cover;
-}
-
-.img-3 {
-  background: url("https://picsum.photos/200/300") no-repeat 50% 50%;
-  background-size: cover;
-}
-
-.img-4 {
-  background: url("https://picsum.photos/200/300") no-repeat 50% 50%;
-  background-size: cover;
-}
-
-.header-loader {
-  color: #a77a3f;
-  text-transform: uppercase;
-  font-size: 40px;
-}
-
-.header-loader h1 {
+.col-loader .item {
   position: relative;
+  flex: 1;
+  width: 100%;
+  background: gray;
+  overflow: hidden;
 }
 
-.ml12 .letter {
-  display: inline-block;
-  line-height: 1em;
-}
+.c-1,
+.c-3,
+.c-5 {
+  top: 100%;
 
-.link a {
-  color: red;
-  text-transform: uppercase;
-  font-size: 40px;
-  font-family: "Neutral Face";
-}
-
-@media (min-width: 900px) {
-  .container-loader {
-    display: flex;
-  }
-
-  .images {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .item {
+    top: 100%;
   }
 }
 
-@media (max-width: 900px) {
-  .column {
-    width: 100%;
+.c-2,
+.c-4 {
+  .item {
+    top: -100%;
+  }
+}
+
+@media(max-width: 900px) {
+  .slide-num {
+    text-align: left;
+    padding-left: 2em;
+    margin-bottom: 2.5em;
   }
 
-  .img {
-    width: 400px;
-    height: 400px;
+  .title {
+    font-size: 30px;
   }
 
-  .header-loader {
-    font-size: 20px;
-    padding: 80px 0;
+  .icon,
+  .icon-2 {
+    padding: 0 1em;
+    font-size: 16px;
+  }
+
+  .preview img {
+    width: 60px;
+    height: 40px;
   }
 }
 </style>

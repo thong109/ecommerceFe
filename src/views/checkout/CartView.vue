@@ -68,42 +68,46 @@
               </tbody> -->
             </table>
             <div v-if="cartStore.carts.length > 0">
-              <div v-for="cart in cartStore.carts" :key="cart.id"
-                class="cartsItem row align-items-center border-bottom py-3">
-                <!-- Hình + Tên sản phẩm + Thuộc tính -->
-                <div class="col-12 mb-3 mb-md-0 col-md-7 d-flex">
-                  <div class="product__cart__item__pic">
-                    <img :src="getAvatarUrl(cart.product.image)" width="100" height="100" :alt="cart.product.name"
-                      class="me-3 rounded" />
-                  </div>
-                  <div class="product__cart__item__text">
-                    <h6>{{ cart.product.name }}</h6>
-                    <h5 class="mb-2">{{ formatPrice(cart.product.price) }}</h5>
-                    <div v-for="(value, key) in cart.attributes" :key="key"
-                      class="d-flex align-items-center small text-dark">
-                      <b>{{ key }}:</b>
-                      <p class="m-0 ms-2">{{ value }}</p>
+              <div v-for="cart in cartStore.carts" :key="cart.id" class="cartsItem mb-3 border-bottom">
+                <div class="row align-items-center m-0 p-2" :class="{ 'border border-danger': cart.invalid }">
+                  <!-- Hình + Tên sản phẩm + Thuộc tính -->
+                  <div class="col-12 mb-3 mb-md-0 col-md-7 d-flex">
+                    <div class="product__cart__item__pic">
+                      <img :src="getAvatarUrl(cart.product.image)" width="100" height="100" :alt="cart.product.name"
+                        class="me-3 rounded" />
+                    </div>
+                    <div class="product__cart__item__text">
+                      <h6>{{ cart.product.name }}</h6>
+                      <h5 class="mb-2">{{ formatPrice(cart.product.price) }}</h5>
+                      <div v-for="(value, key) in cart.attributes" :key="key"
+                        class="d-flex align-items-center small text-dark">
+                        <b>{{ key }}:</b>
+                        <p class="m-0 ms-2">{{ value }}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-3 col-md-2">
-                  <div class="quantity border p-1 rounded-2">
-                    <div class="pro-qty-2">
-                      <input type="number" class="w-100 border-0" v-model.number="cart.qty"
-                        @keydown="(e) => onKeyDown(e, cart)" @keyup="updateQty" />
+                  <div class="col-3 col-md-2">
+                    <div class="quantity border p-1 rounded-2">
+                      <div class="pro-qty-2">
+                        <input type="number" class="w-100 border-0" v-model.number="cart.qty"
+                          @keydown="(e) => onKeyDown(e, cart)" @keyup="updateQty" />
+                      </div>
                     </div>
                   </div>
+                  <div class="col-7 col-md-2 overflow-hidden">
+                    <p class="mb-0 fw-bold text-end text-md-start">
+                      {{ formatPrice(cart.product.price * cart.qty) }}
+                    </p>
+                  </div>
+                  <div class="col-2 col-md-1 text-end">
+                    <button class="btn btn-sm btn-outline-danger" @click="deleteItem(cart.id)">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
                 </div>
-                <div class="col-7 col-md-2 overflow-hidden">
-                  <p class="mb-0 fw-bold text-end text-md-start">
-                    {{ formatPrice(cart.product.price * cart.qty) }}
-                  </p>
-                </div>
-                <div class="col-2 col-md-1 text-end">
-                  <button class="btn btn-sm btn-outline-danger" @click="deleteItem(cart.id)">
-                    <i class="bi bi-x-lg"></i>
-                  </button>
-                </div>
+                <p v-if="cart.invalid" class="text-danger small mb-3">
+                  ⚠️ {{ cart.invalidMessage }}
+                </p>
               </div>
             </div>
             <div v-else>
@@ -142,8 +146,8 @@
                 formatPrice(cartStore.totalPrice) :
                 formatPrice(cartStore.discountedTotalPrice) }}</span></li>
             </ul>
-            <router-link v-if="cartStore.carts.length > 0" to="/checkout" class="primary-btn">Thanh toán</router-link>
-            <span v-else class="primary-btn">Dashboard</span>
+            <button :disabled="cartStore.carts.length <= 0" type="button" class="primary-btn mb-0 w-100"
+              @click="checkCart">Thanh toán</button>
           </div>
         </div>
       </div>
@@ -157,11 +161,15 @@ import { formatPrice, getAvatarUrl } from '@/helpers/formatted';
 import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
 import { computed, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
 const coupon = ref('');
 const discount = computed(() => cartStore.discount)
+const router = useRouter()
+const errorMessage = ref('')
+
 const updateQty = (e) => {
   console.log('Giá trị sau khi thay đổi:', e.target.value)
 }
@@ -189,6 +197,42 @@ const addCoupon = async (couponCode) => {
 
 const deleteItem = async (id) => {
   await cartStore.removeFromCart(id)
+}
+
+const checkCart = async () => {
+  const result = await cartStore.checkCart()
+  if (!result.valid) {
+    cartStore.carts.forEach(item => {
+      const found = result.invalidItems.find(i => i.product_id === item.product_id);
+      if (found) {
+        item.invalid = true;
+        item.invalidMessage = found.message;
+      } else {
+        item.invalid = false;
+        item.invalidMessage = "";
+      }
+    });
+  } else {
+    router.push({
+      name: 'checkout'
+    })
+  }
+  // if (res) {
+  //   router.push({
+  //     name: 'checkout'
+  //   })
+  // }
+
+  // if (res.data.status === "error") {
+  //   const invalidProductIds = res.data.invalid_items.map(
+  //     (item) => item.product_id
+  //   );
+
+  //   // Ví dụ: highlight các item này
+  //   cartItems.value.forEach((item) => {
+  //     item.invalid = invalidProductIds.includes(item.product_id);
+  //   });
+  // }
 }
 
 watchEffect(async () => {

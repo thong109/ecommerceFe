@@ -47,7 +47,7 @@
         </router-link>
       </li>
       <li>
-        <router-link class="app-menu__item" to="table-data-oder.html">
+        <router-link class="app-menu__item" to="/admin/order/">
           <i class='app-menu__icon bx bx-task'></i>
           <span class="app-menu__label">Quản lý đơn hàng</span>
         </router-link>
@@ -91,7 +91,6 @@ const toogle = defineModel()
 
 import { getAvatarUrl } from '@/helpers/formatted';
 import { useAuthStore } from '@/stores/auth';
-import { useUserStore } from '@/stores/user';
 import { onMounted } from 'vue';
 const authStore = useAuthStore()
 

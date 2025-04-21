@@ -564,6 +564,14 @@ ol {
   Hero
 -----------------------*/
 
+.hero {
+  height: 100vh;
+}
+
+.hero__slider {
+  height: 100%;
+}
+
 .hero__slider .swiper-slide-active .hero__text h6 {
   top: 0;
   opacity: 1;
@@ -615,8 +623,10 @@ ol {
 .hero__items {
   background-size: cover;
   background-position: center center;
-  height: 800px;
-  padding-top: 230px;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero__text h6 {

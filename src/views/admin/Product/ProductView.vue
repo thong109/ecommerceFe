@@ -79,6 +79,9 @@
                     <div class="col-12 small">
                       <strong>Thương hiệu:</strong> {{ product.brandName }}
                     </div>
+                    <div class="col-12 small">
+                      <strong>Số lượng:</strong> {{ product.quantity }}
+                    </div>
                   </div>
                 </td>
                 <td>
