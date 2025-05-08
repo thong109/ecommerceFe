@@ -52,7 +52,7 @@
             </div>
             <div class="form-group col-md-4 ">
               <label for="exampleSelect1" class="control-label">Danh mục</label>
-              <select v-model="selectedCategoryId" @change="fetchAttributes" class="form-control">
+              <select v-model="selectedCategoryId" @change="fetchAttributes('change')" class="form-control">
                 <option v-for="cat in categoryStore.data" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
               <div class="invalid-feedback">
@@ -86,7 +86,8 @@
                     <div class="d-flex flex-wrap align-items-center" v-if="attr.values.length">
                       <div v-for="value in attr.values" :key="value.id" class="form-check pr-3">
                         <input type="checkbox" :id="`attr-${attr.id}-value-${value.id}`" :value="value.id"
-                          v-model="selectedAttributes[attr.id]" class="form-check-input" @change="clearError('attributes')"/>
+                          v-model="selectedAttributes[attr.id]" class="form-check-input"
+                          @change="clearError('attributes')" />
                         <label :for="`attr-${attr.id}-value-${value.id}`" class="form-check-label">{{ value.value
                         }}</label>
                       </div>
@@ -105,7 +106,7 @@
                   accept="image/*" />
               </div>
               <div id="thumbbox" v-if="previewImage">
-                <img :src="previewImage" alt="Thumb image" id="thumbimage" height="450" width="400" />
+                <img :src="getAvatarUrl(previewImage)" alt="Thumb image" id="thumbimage" height="450" width="400" />
                 <button class="removeimg mb-0" type="button" @click="removeImage">×</button>
               </div>
               <div id="boxchoice">
@@ -134,7 +135,8 @@
             </div>
 
             <div class="col-12">
-              <button class="btn btn-small btn-outline-primary" type="submit">Lưu lại</button>
+              <ButtonBack class="me-3 btn border border-black text-capitalize" />
+              <button class="btn btn-small btn-outline-primary mb-0" type="submit">Lưu lại</button>
             </div>
             <!-- <a class="btn btn-cancel" href="table-data-product.html">Hủy bỏ</a> -->
           </form>
@@ -145,12 +147,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axiosConfig from '@/helpers/axiosConfig'
 import { useProductStore } from '@/stores/product'
 import { useCategoryStore } from '@/stores/category'
 import { useBrandStore } from '@/stores/brand'
+import ButtonBack from '@/components/button/ButtonBack.vue'
+import { getAvatarUrl } from "@/helpers/formatted";
 
 const selectedCategoryId = ref('')
 const selectedAttributes = ref({})
@@ -160,9 +164,40 @@ const brandStore = useBrandStore()
 const router = useRouter()
 const fileInput = ref(null)
 const previewImage = ref(null)
-const product = productStore.product
 const attributes = ref([])
 const errors = ref({});
+const route = useRoute()
+const product = computed(() => productStore.product);
+const productId = computed(() => route.params.id);
+
+watch(() => productStore.previewImage, (val) => {
+  previewImage.value = val;
+}, { immediate: true });
+
+watch(productId, async (id) => {
+  if (id) {
+    // Lấy chi tiết sản phẩm
+    await productStore.showProduct(id);
+    // Lấy danh mục của sản phẩm và set selectedCategoryId
+    selectedCategoryId.value = product.value.category_id;
+
+    // Fetch lại thuộc tính khi category_id thay đổi
+    await fetchAttributes();
+
+    // Nếu có các thuộc tính đã chọn từ backend (product.attributes), gán vào selectedAttributes
+    if (product.value.attributes) {
+      for (const attrId in product.value.attributes) {
+        selectedAttributes.value[attrId] = product.value.attributes[attrId];
+      }
+    }
+  }
+}, { immediate: true });
+
+watch(selectedCategoryId, async (newVal, oldVal) => {
+  if (newVal !== oldVal && !productId.value) {
+    await fetchAttributes();
+  }
+});
 
 const handleFileChange = (event) => {
   delete errors.value['image'];
@@ -185,7 +220,7 @@ const handleFileChange = (event) => {
     reader.readAsDataURL(file)
 
     // Cập nhật vào category.image
-    product.image = file // Sử dụng .value khi cập nhật vào `ref`
+    product.value.image = file // Sử dụng .value khi cập nhật vào `ref`
   } else {
     alert('Vui lòng chọn file ảnh hợp lệ!')
   }
@@ -193,69 +228,109 @@ const handleFileChange = (event) => {
 
 const removeImage = () => {
   previewImage.value = null
-  product.image = null
+  product.value.image = null
   if (fileInput.value) {
     fileInput.value.value = '' // reset input file safely
   }
 }
 
 const submitProduct = async () => {
+  const formData = new FormData()
+
+  Object.entries(product.value).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      formData.append(key, value)
+    }
+  })
+
+  // Thêm danh mục
+  formData.append('category_id', selectedCategoryId.value)
+
+  // Thêm thuộc tính
+  for (const attrId in selectedAttributes.value) {
+    const value = selectedAttributes.value[attrId];
+    if (Array.isArray(value) && value.length > 0) {
+      value.forEach(val => {
+        formData.append(`attributes[${attrId}][]`, val);
+      });
+    } else if (value) {
+      formData.append(`attributes[${attrId}]`, value);
+    }
+  }
+
+  if (product.value.image) {
+    formData.append('image', product.value.image)
+  }
+
+  // for (let pair of formData.entries()) {
+  //   console.log(pair[0], pair[1])
+  // }
+
   try {
-    const formData = new FormData()
-
-    Object.entries(product).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value)
-      }
-    })
-
-    // Thêm danh mục
-    formData.append('category_id', selectedCategoryId.value)
-
-    // Thêm thuộc tính
-    for (const attrId in selectedAttributes.value) {
-      const value = selectedAttributes.value[attrId]
-      if (Array.isArray(value)) {
-        value.forEach(val => {
-          formData.append(`attributes[${attrId}][]`, val)
-        })
-      } else {
-        formData.append(`attributes[${attrId}]`, value)
-      }
+    let res;
+    if (productId.value) {
+      // Chỉnh sửa sản phẩm
+      res = await productStore.editProduct(productId.value, formData, router);
+    } else {
+      // Thêm sản phẩm mới
+      res = await productStore.addProduct(formData, router);
     }
 
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0], pair[1])
-    // }
-
-    const res = await productStore.addProduct(formData, router)
+    // Xử lý lỗi nếu có
     if (res && res.code === 404) {
-      errors.value = res.errors
+      errors.value = res.errors;
     }
-    return
   } catch (error) {
-    console.error(error)
-    alert('Có lỗi xảy ra khi thêm sản phẩm!')
+    console.error("Có lỗi khi gửi dữ liệu sản phẩm: ", error);
   }
 }
 
 // Lấy các thuộc tính của danh mục đã chọn
-const fetchAttributes = async () => {
+const fetchAttributes = async (type = '') => {
   delete errors.value['category_id'];
-  if (!selectedCategoryId.value) return
 
-  try {
-    const res = await axiosConfig.get(`/categories/${selectedCategoryId.value}/attributes`)
-    attributes.value = res.data
+  if (!selectedCategoryId.value) return;
 
-    selectedAttributes.value = {}
+  const res = await axiosConfig.get(`/categories/${selectedCategoryId.value}/attributes`);
+  attributes.value = res.data;
+
+  // Khởi tạo selectedAttributes với mảng trống cho mỗi thuộc tính
+  selectedAttributes.value = {};
+
+  // Lặp qua tất cả các thuộc tính và khởi tạo mảng trống cho mỗi thuộc tính
+  attributes.value.forEach(attr => {
+    selectedAttributes.value[attr.id] = selectedAttributes.value[attr.id] || [];
+  });
+
+  if (type === 'change') {
+    // Reset lại selectedAttributes để không lấy thuộc tính cũ từ sản phẩm
+    selectedAttributes.value = {};
+
+    // Thiết lập lại các giá trị mặc định từ attributes vào selectedAttributes
     attributes.value.forEach(attr => {
-      selectedAttributes.value[attr.id] = []  // Khởi tạo như một mảng để chứa các lựa chọn
-    })
-  } catch (error) {
-    console.error("Error fetching attributes:", error)
+      // Giả sử thuộc tính có thể chọn nhiều giá trị (checkbox), thì chọn các giá trị mặc định (trong trường hợp này là mảng)
+      if (attr.default_values && attr.default_values.length > 0) {
+        selectedAttributes.value[attr.id] = [...attr.default_values];
+      } else {
+        selectedAttributes.value[attr.id] = []; // Nếu không có giá trị mặc định, để trống
+      }
+    });
   }
-}
+
+  // Không lấy lại thuộc tính cũ từ sản phẩm khi có type === 'change', bỏ qua phần này
+  if (productId.value && product.value.attributes && type !== 'change') {
+    Object.keys(product.value.attributes).forEach(attrId => {
+      const attrValue = product.value.attributes[attrId];
+
+      // Chuyển chuỗi thành mảng nếu cần
+      if (typeof attrValue === 'string') {
+        selectedAttributes.value[attrId] = attrValue.split(',');  // Giả sử các giá trị trong chuỗi được phân cách bởi dấu phẩy
+      } else {
+        selectedAttributes.value[attrId] = Array.isArray(attrValue) ? attrValue : [attrValue];
+      }
+    });
+  }
+};
 
 onMounted(async () => {
   await categoryStore.fetchProductByCategory()

@@ -134,7 +134,7 @@ ol {
   text-transform: uppercase;
   padding: 12px 30px;
   color: #ffffff;
-  background: #000000;
+  background: var(--theme-color);
   letter-spacing: 4px;
   transition: opacity .35s ease;
   border: 1px solid #000;
@@ -324,7 +324,7 @@ ol {
 }
 
 .header__top {
-  background: #111111;
+  background: var(--theme-color);
   padding: 10px 0;
 }
 
@@ -1224,34 +1224,34 @@ ol {
 .shop__sidebar__search form input {
   width: 100%;
   font-size: 15px;
-  color: #b7b7b7;
+  color: #000;
   padding-left: 20px;
   border: 1px solid #e5e5e5;
   height: 42px;
 }
 
 .shop__sidebar__search form input::-webkit-input-placeholder {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__search form input::-moz-placeholder {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__search form input:-ms-input-placeholder {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__search form input::-ms-input-placeholder {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__search form input::placeholder {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__search form button {
-  color: #b7b7b7;
+  color: #000;
   font-size: 15px;
   border: none;
   background: transparent;
@@ -1263,7 +1263,7 @@ ol {
 }
 
 .shop__sidebar__search form button i {
-  color: #b7b7b7;
+  color: #000;
 }
 
 .shop__sidebar__accordion .card {
@@ -1310,7 +1310,7 @@ ol {
 .shop__sidebar__categories ul li a,
 .shop__sidebar__price ul li a,
 .shop__sidebar__brand ul li button {
-  color: #b7b7b7;
+  color: #000;
   font-size: 15px;
   line-height: 32px;
   -webkit-transition: all, 0.3s;
@@ -2001,7 +2001,7 @@ ol {
 -----------------------*/
 
 .footer {
-  background: #111111;
+  background: var(--theme-color);
   padding-top: 70px;
 }
 
@@ -4068,4 +4068,8 @@ input[type=number] {
 
 .invalid-feedback {
   display: block !important;
+}
+
+.max-w-480px {
+  max-width: 480px;
 }

@@ -4,7 +4,6 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="breadcrumb__text">
-            <h4>Cửa hàng</h4>
             <div class="breadcrumb__links">
               <router-link to="/">Trang chủ</router-link>
               <template v-for="(title, index) in titles" :key="index">

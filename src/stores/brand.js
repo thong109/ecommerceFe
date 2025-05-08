@@ -1,120 +1,114 @@
-import {
-  defineStore
-} from 'pinia'
-import axiosConfig from '@/helpers/axiosConfig'
-import {
-  ref
-} from 'vue'
-import {
-  toast
-} from 'vue3-toastify'
+import { defineStore } from "pinia";
+import axiosConfig from "@/helpers/axiosConfig";
+import { ref } from "vue";
+import { toast } from "vue3-toastify";
 
-export const useBrandStore = defineStore('brand', () => {
-  const isLoading = ref(true)
+export const useBrandStore = defineStore("brand", () => {
+  const isLoading = ref(true);
 
-  const data = ref([])
+  const data = ref([]);
   const brand = ref({
-    name: '',
-    status: '',
+    name: "",
+    status: "",
     image: null,
-  })
-  const previewImage = ref(null)
+  });
+  const previewImage = ref(null);
 
   async function fetchProductByBrand() {
-    isLoading.value = true
+    isLoading.value = true;
     try {
-      const res = await axiosConfig.get('/brands')
-      data.value = res.data
+      const res = await axiosConfig.get("/brands");
+      data.value = res.data;
     } catch (e) {
-      console.error(e)
+      console.error(e);
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
-  async function fetchBrands() {
-    isLoading.value = true
+  async function fetchBrands(name = "") {
+    isLoading.value = true;
     try {
-      const res = await axiosConfig.get('/brands/all')
-      data.value = res.data
+      const res = await axiosConfig.get(`/brands/all?attr=${name}`);
+      data.value = res.data;
     } catch (e) {
-      console.error(e)
+      console.error(e);
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
   async function showBrand(id) {
     try {
-      const res = await axiosConfig.get(`/brands/show/${id}`)
+      const res = await axiosConfig.get(`/brands/show/${id}`);
       brand.value = {
         name: res.data.name,
         status: res.data.status,
         image: null,
-      }
-      previewImage.value = res.data.image
+      };
+      previewImage.value = res.data.image;
     } catch (e) {
-      console.error(e)
+      console.error(e);
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
   async function addBrand(formData, router) {
     try {
-      const res = await axiosConfig.post('/brands/store', formData)
+      const res = await axiosConfig.post("/brands/store", formData);
       router.push(`/admin/brand/edit/${res.data.brandId}`);
     } catch (error) {
       if (error.response && error.response.data.errors) {
         return {
           errors: error.response.data.errors,
-          code: 404
-        }
+          code: 404,
+        };
       }
     }
   }
 
   async function editBrand(id, formData, router) {
     try {
-      formData.append('_method', 'PUT')
-      await axiosConfig.post(`/brands/update/${id}`, formData)
-      resetFormBrand()
+      formData.append("_method", "PUT");
+      await axiosConfig.post(`/brands/update/${id}`, formData);
+      resetFormBrand();
       router.push({
-        name: 'brand'
+        name: "brand",
       });
     } catch (error) {
       if (error.response && error.response.data.errors) {
         return {
           errors: error.response.data.errors,
-          code: 404
-        }
+          code: 404,
+        };
       }
     }
   }
 
   async function deleteBrand(id) {
-    isLoading.value = true
+    isLoading.value = true;
     try {
-      const res = await axiosConfig.post(`/brand/destroy/${id}`)
-      toast.success(res.data.message)
-      fetchBrands()
+      const res = await axiosConfig.post(`/brand/destroy/${id}`);
+      toast.success(res.data.message);
+      fetchBrands();
     } catch (e) {
       if (e.response) {
-        toast.error(e.response.data.message)
+        toast.error(e.response.data.message);
       } else {
         console.log(e);
       }
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
   async function resetFormBrand() {
     brand.value = {
-      name: '',
-      status: '',
+      name: "",
+      status: "",
       image: null,
-    }
-    previewImage.value = null
+    };
+    previewImage.value = null;
   }
 
   return {
@@ -128,6 +122,6 @@ export const useBrandStore = defineStore('brand', () => {
     resetFormBrand,
     showBrand,
     editBrand,
-    deleteBrand
-  }
-})
+    deleteBrand,
+  };
+});

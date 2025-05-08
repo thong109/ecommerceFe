@@ -44,6 +44,12 @@ export function formatDate(dateString) {
   return parts.join(" ");
 }
 
+export function formatDateTime(dateString) {
+  const date = new Date(dateString);
+  const formatted = date.toLocaleDateString("vi-VN");
+  return formatted;
+}
+
 export const getAvatarUrl = (avatar) => {
   if (!avatar) {
     return "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"; // ảnh fallback nếu không có

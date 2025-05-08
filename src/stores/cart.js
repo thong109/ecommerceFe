@@ -73,9 +73,9 @@ export const useCartStore = defineStore("cart", {
       try {
         const response = await axiosConfig.get("/carts/get");
         this.carts = response.data;
-        this.isLoading = false;
       } catch (error) {
         this.error = "Failed to load cart";
+      } finally {
         this.isLoading = false;
       }
     },
@@ -110,17 +110,17 @@ export const useCartStore = defineStore("cart", {
       try {
         const response = await axiosConfig.post("/checkout", formData);
         if (response.data.code === 200) {
-          alert("Thanh toán thành công!");
           this.deleteCoupon();
           this.fetchCart();
+          return response.data;
         } else {
-          alert("Thanh toán không thành công!");
+          toast.error(response.data.message);
         }
       } catch (error) {
         if (error.response && error.response.data.errors) {
           return {
             errors: error.response.data.errors,
-            code: 404,
+            code: 422,
           };
         }
       }
@@ -148,6 +148,23 @@ export const useCartStore = defineStore("cart", {
           message: error.response?.data?.message || "Lỗi không xác định",
           invalidItems: error.response?.data?.invalid_items || [],
         };
+      }
+    },
+    async checkoutVnPay(formData) {
+      try {
+        const res = await axiosConfig.post("/payment/momo", formData);
+        if(res.data.code === 200) {
+          return res
+        }
+      } catch (error) {
+        console.log(error);
+
+        if (error.response && error.response.data.errors) {
+          return {
+            errors: error.response.data.errors,
+            code: 422,
+          };
+        }
       }
     },
   },

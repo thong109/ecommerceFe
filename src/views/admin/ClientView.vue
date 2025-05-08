@@ -1,5 +1,5 @@
 <template>
-  <Loading :isLoading="userStore.isLoading" />
+  <Loading :isLoading="authStore.isLoading" />
   <div class="row">
     <div class="col-md-12">
       <div class="app-title align-items-center">
@@ -14,40 +14,9 @@
     <div class="col-md-12">
       <div class="tile">
         <div class="tile-body">
-          <div class="row element-button">
-            <div class="col-sm-2">
-              <a class="btn btn-add btn-sm" href="form-add-nhan-vien.html" title="Thêm"><i class="bi bi-plus-lg"></i>
-                Tạo mới nhân viên</a>
-            </div>
-            <div class="col-sm-2">
-              <a class="btn btn-delete btn-sm nhap-tu-file" type="button" title="Nhập"><i
-                  class="bi bi-file-earmark-arrow-up-fill"></i> Tải từ file</a>
-            </div>
-
-            <div class="col-sm-2">
-              <a class="btn btn-delete btn-sm print-file" type="button" title="In" onclick="myApp.printTable()"><i
-                  class="bi bi-file-earmark-break-fill"></i> In dữ liệu</a>
-            </div>
-            <div class="col-sm-2">
-              <a class="btn btn-delete btn-sm print-file js-textareacopybtn" type="button" title="Sao chép"><i
-                  class="bi bi-files"></i> Sao chép</a>
-            </div>
-
-            <div class="col-sm-2">
-              <a class="btn btn-excel btn-sm" href="" title="In"><i class="bi bi-filetype-csv"></i> Xuất Excel</a>
-            </div>
-            <div class="col-sm-2">
-              <a class="btn btn-delete btn-sm pdf-file" type="button" title="In"><i class="bi bi-file-pdf-fill"></i>
-                Xuất PDF</a>
-            </div>
-            <div class="col-sm-2">
-              <a class="btn btn-delete btn-sm" type="button" title="Xóa"><i class="bi bi-trash"></i> Xóa tất cả </a>
-            </div>
-          </div>
           <table class="table table-hover table-bordered table-responsive border-0" cellpadding="0" cellspacing="0"
             style=" table-layout: fixed;">
             <colgroup>
-              <col style="width: 1%">
               <col style="width: 20%">
               <col style="width: 10%">
               <col style="width: 30%">
@@ -56,7 +25,6 @@
             </colgroup>
             <thead>
               <tr>
-                <th><input type="checkbox" id="all"></th>
                 <th>Họ và tên</th>
                 <th class="text-center">Ảnh</th>
                 <th>Địa chỉ</th>
@@ -64,11 +32,22 @@
                 <th class="text-center">Tính năng</th>
               </tr>
             </thead>
-            <tbody v-if="userStore.usersData.length > 0">
-              <tr v-for="user in userStore.usersData" :key="user.id">
-                <td><input type="checkbox" name="check1" value="1"></td>
-                <td>{{ user.name }}</td>
-                <td><img class="img-card-person" :src="getAvatarUrl(user.user_info.avatar)" :alt="user.name"></td>
+            <tbody v-if="authStore.usersData.length > 0">
+              <tr v-for="user in authStore.usersData" :key="user.id">
+                <td>
+                  <b>{{ user.name }}</b>
+                  <p class="mb-0">{{ user.email }}</p>
+                </td>
+                <td>
+                  <div>
+                    <photo-provider>
+                      <photo-consumer :key="getAvatarUrl(user.user_info.avatar)"
+                        :intro="getAvatarUrl(user.user_info.avatar)" :src="getAvatarUrl(user.user_info.avatar)">
+                        <img :src="getAvatarUrl(user.user_info.avatar)" class="view-box" />
+                      </photo-consumer>
+                    </photo-provider>
+                  </div>
+                </td>
                 <td>{{ user.user_info.address }}</td>
                 <td>{{ user.user_info.phone }}</td>
                 <td class="text-center">
@@ -98,18 +77,25 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
 import { onMounted } from 'vue';
 import { getAvatarUrl } from "@/helpers/formatted";
 import Loading from '@/components/Loading.vue';
+import { useAuthStore } from '@/stores/auth';
+import Vue3PhotoPreview from 'vue3-photo-preview';
+import 'vue3-photo-preview/dist/index.css';
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 onMounted(async () => {
-  await userStore.fetchAllUser()
-})
+  await authStore.fetchAllUser();
+});
 
-const handleDeleteUser = (id) => {
-  console.log(id);
+const handleDeleteUser = async (id) => {
+  const res = await authStore.destroyUser([id])
+  if (res) {
+    await authStore.fetchAllUser();
+  }
 }
+
+
 </script>

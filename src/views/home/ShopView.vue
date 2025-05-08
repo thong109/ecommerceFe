@@ -92,7 +92,7 @@
                   <select class="form-select" @change="handleSort">
                     <option value="low">Từ thấp đến cao</option>
                     <option value="high">Từ cao đến thấp</option>
-                    <option value="rating">Đánh giá</option>
+                    <!-- <option value="rating">Đánh giá</option> -->
                   </select>
                 </div>
               </div>
@@ -123,10 +123,10 @@
                     <h6>
                       <router-link :to="`/product/${product.id}`">{{ product.name }}</router-link>
                     </h6>
-                    <div class="rating">
+                    <!-- <div class="rating">
                       <i v-for="i in 5" :key="i"
                         :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
-                    </div>
+                    </div> -->
                   </div>
                   <h5>{{ formatPrice(product.price) }}</h5>
                 </div>

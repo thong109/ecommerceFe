@@ -30,6 +30,10 @@ import CheckoutView from "@/views/checkout/CheckoutView.vue";
 import WishlistView from "@/views/user/WishlistView.vue";
 import OrderView from "@/views/admin/Order/OrderView.vue";
 import OrderDetailView from "@/views/admin/Order/OrderDetailView.vue";
+import EditProfileView from "@/views/user/EditProfileView.vue";
+import OrderDetailUserView from "@/views/user/OrderDetailView.vue";
+import SettingView from "@/views/admin/Settings/SettingView.vue";
+import MomoReturnPage from "@/views/home/MomoReturnPage.vue";
 
 const routes = [
   {
@@ -96,6 +100,11 @@ const routes = [
         component: CheckoutView,
       },
       {
+        path: "/payment-result",
+        name: "payment-result",
+        component: MomoReturnPage,
+      },
+      {
         path: ":pathMatch(.*)*",
         name: "NotFound",
         component: NotFound,
@@ -114,6 +123,16 @@ const routes = [
         path: "",
         name: "user",
         component: ProfileView,
+      },
+      {
+        path: "edit",
+        name: "edit-profile",
+        component: EditProfileView,
+      },
+      {
+        path: "order/:id",
+        name: "order-user",
+        component: OrderDetailUserView,
       },
       {
         path: "wishlists",
@@ -156,6 +175,11 @@ const routes = [
         component: ProductAddView,
       },
       {
+        path: "/admin/product/edit/:id",
+        name: "product-edit",
+        component: ProductAddView,
+      },
+      {
         path: "category",
         name: "category",
         component: CategoryView,
@@ -194,6 +218,11 @@ const routes = [
         path: "order/:id",
         name: "order-detail",
         component: OrderDetailView,
+      },
+      {
+        path: "settings",
+        name: "settings",
+        component: SettingView,
       },
       {
         path: ":pathMatch(.*)*",

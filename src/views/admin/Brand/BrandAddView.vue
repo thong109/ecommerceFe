@@ -67,7 +67,7 @@
 <script setup>
 import { getAvatarUrl } from '@/helpers/formatted'
 import { useBrandStore } from '@/stores/brand'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const brandStore = useBrandStore()
 const router = useRouter()

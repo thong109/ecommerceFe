@@ -3,8 +3,9 @@ export function useOrderStatus() {
     PENDING: { value: 0, label: "Chưa giải quyết", color: "warning" },
     PROCESSING: { value: 1, label: "Đã lên đơn", color: "info" },
     SHIPPED: { value: 2, label: "Đang giao hàng", color: "primary" },
-    DELIVERED: { value: 3, label: "Đã giao", color: "success" },
-    CANCELLED: { value: 4, label: "Đã hủy đơn", color: "danger" },
+    CONFIRMED: { value: 3, label: "Đã xác nhận", color: "default" },
+    DELIVERED: { value: 4, label: "Đã giao", color: "success" },
+    CANCELLED: { value: 5, label: "Đã hủy đơn", color: "danger" },
   };
 
   // Mảng để dùng cho <select>

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axiosConfig from "@/helpers/axiosConfig";
 import { useCartStore } from "./cart";
 import { toast } from "vue3-toastify";
+import axios from "axios";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -10,6 +11,7 @@ export const useAuthStore = defineStore("auth", {
     isLoadHeader: true,
     wishlists: [],
     usersData: [],
+    userBuy: [],
   }),
   actions: {
     async fetchUser() {
@@ -102,10 +104,15 @@ export const useAuthStore = defineStore("auth", {
           `/user/update/${this.user.id}`,
           formData
         );
-        toast.success(res.data.message);
         await this.fetchUser();
-      } catch (e) {
-        console.error(e);
+        return res;
+      } catch (error) {
+        if (error.response && error.response.data.errors) {
+          return {
+            errors: error.response.data.errors,
+            code: 422,
+          };
+        }
       }
     },
     async fetchWishlist() {
@@ -147,6 +154,39 @@ export const useAuthStore = defineStore("auth", {
         await axiosConfig.delete(`/wishlist/${productId}`);
       } catch (error) {
         console.error("Lỗi khi xóa wishlist:", error);
+      }
+    },
+    async fetchAllUser() {
+      this.isLoading = true;
+      try {
+        const res = await axiosConfig.get("/users");
+        this.usersData = res.data.users;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async fetchUserBuy() {
+      this.isLoading = true;
+      try {
+        const res = await axiosConfig.get("/user/buy");
+        this.userBuy = res.data.data;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async destroyUser(id) {
+      try {
+        const res = await axiosConfig.post("/user/destroy", {
+          ids: id,
+        });
+        toast.success(res.data.message);
+        return true;
+      } catch (error) {
+        console.log(error);
       }
     },
   },

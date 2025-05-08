@@ -7,8 +7,8 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="product__details__breadcrumb">
-                <router-link to="/">Home</router-link>
-                <router-link to="/shop">Shop</router-link>
+                <router-link to="/">Trang chủ</router-link>
+                <router-link to="/shop">Của hàng</router-link>
                 <span>{{ product.name }}</span>
               </div>
             </div>
@@ -47,11 +47,11 @@
                     <div class="col-lg-12">
                       <div class="product__details__text">
                         <h4>{{ product.name }}</h4>
-                        <div class="rating mb-3">
+                        <!-- <div class="rating mb-3">
                           <i v-for="i in 5" :key="i"
                             :class="i <= product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star text-black'"></i>
                           <span> - 5 Reviews</span>
-                        </div>
+                        </div> -->
                         <h3>{{ formatPrice(product.price) }}</h3>
                         <p class="mb-3">{{ product.short_desc }}</p>
                         <div class="product__details__option mb-3">
@@ -72,14 +72,13 @@
                             </div>
                           </div>
                           <button type="button" @click="handleAddToCart(product.id, product.price)"
-                            :disabled="product.quantity === 0" class="primary-btn mb-0">add to
-                            cart</button>
+                            :disabled="product.quantity === 0" class="primary-btn mb-0">Thêm vào giỏ</button>
                         </div>
                         <div class="product__details__last__option">
                           <ul class="m-0 p-0">
-                            <li><span>Quantity:</span> {{ product.quantity }}</li>
-                            <li v-if="product.category"><span>Categories:</span> {{ product.category.name }}</li>
-                            <li><span>Tag:</span> <router-link to="path" class="text-dark px-1"
+                            <li><span>Số lượng:</span> {{ product.quantity }}</li>
+                            <li v-if="product.category"><span>Danh mục:</span> {{ product.category.name }}</li>
+                            <li><span>Thẻ:</span> <router-link to="path" class="text-dark px-1"
                                 v-for="(tag, index) in product.tag" :key="index">{{ tag }}</router-link></li>
                           </ul>
                         </div>
@@ -96,15 +95,7 @@
               <div class="product__details__tab">
                 <ul class="nav nav-tabs w-100" role="tablist">
                   <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#tabs-5" role="tab">Description</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Customer
-                      Previews(5)</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Additional
-                      information</a>
+                    <a class="nav-link active" data-toggle="tab" href="#tabs-5" role="tab">Nội dung</a>
                   </li>
                 </ul>
                 <div class="tab-content">
